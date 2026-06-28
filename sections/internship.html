@@ -55,10 +55,10 @@
           </div>
           <div class="internship-project-details">
             <ul class="space-y-1.5 text-sm text-zinc-500 ml-4 list-disc list-outside mb-3">
-              <li>负责多模态数据工程：采集世界杯球员高清图像与职业生涯文本，爬取 B 站足球 UP 主解说视频并提取字幕，构建<strong class="text-zinc-700">百万字级多风格解说语料库</strong></li>
-              <li>搭建直播流实时处理流水线，基于目标检测算法实现球员特写镜头精准识别与截取，集成 <strong class="text-zinc-700">InsightFace</strong> 完成球员身份毫秒级识别</li>
-              <li>构建两阶段 RAG 检索增强系统：<strong class="text-zinc-700">BGE-M3</strong> 向量检索 + <strong class="text-zinc-700">BGE-Reranker-v2-m3</strong> 语义重排，提升球员信息检索准确率</li>
-              <li>基于多风格解说语料蒸馏生成定制化系统提示词，对接 <strong class="text-zinc-700">Qwen3.5-4B</strong> 实现专业/激情/幽默多风格无缝切换</li>
+              <li>负责多模态数据工程，采集世界杯球员高清图像与职业生涯文本，爬取 B 站足球 UP 主解说视频并抽取字幕，构建<strong class="text-zinc-700">百万字级多风格足球解说语料库</strong></li>
+              <li>搭建直播流实时处理流水线，基于目标检测算法完成球员特写镜头的精准识别与截取，并集成 <strong class="text-zinc-700">InsightFace</strong> 实现球员身份毫秒级识别</li>
+              <li>构建两阶段 RAG 检索增强系统，采用 <strong class="text-zinc-700">BGE-M3</strong> 向量检索 + <strong class="text-zinc-700">BGE-Reranker-v2-m3</strong> 语义重排，提升球员背景信息检索的准确率与相关性</li>
+              <li>基于多风格解说语料提取偏好样本并构建 <strong class="text-zinc-700">DPO 数据集</strong>，通过偏好对齐训练增强模型在专业、激情、幽默等解说风格上的表达稳定性</li>
             </ul>
             <div class="flex flex-wrap gap-2">
               <span class="soft-tag px-2.5 py-1 bg-blue-50 text-accent rounded-md text-xs font-medium">RAG</span>
@@ -66,6 +66,7 @@
               <span class="soft-tag px-2.5 py-1 bg-blue-50 text-accent rounded-md text-xs font-medium">BGE-Reranker</span>
               <span class="soft-tag px-2.5 py-1 bg-blue-50 text-accent rounded-md text-xs font-medium">InsightFace</span>
               <span class="soft-tag px-2.5 py-1 bg-blue-50 text-accent rounded-md text-xs font-medium">Qwen3.5-4B</span>
+              <span class="soft-tag px-2.5 py-1 bg-blue-50 text-accent rounded-md text-xs font-medium">DPO</span>
               <span class="soft-tag px-2.5 py-1 bg-blue-50 text-accent rounded-md text-xs font-medium">SGLang</span>
             </div>
           </div>
