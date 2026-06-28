@@ -1,0 +1,144 @@
+<!-- ===== PUBLICATIONS ===== -->
+<section id="publications" class="py-24 sm:py-32 bg-white">
+  <div class="max-w-6xl mx-auto px-6">
+    <h2 class="reveal font-heading text-3xl sm:text-4xl font-bold text-primary mb-4">学术论文</h2>
+    <p class="reveal text-zinc-500 mb-12 max-w-xl">默认展示论文概要，点击卡片查看方法细节与实验结果</p>
+
+    <div class="space-y-5">
+      <details class="reveal card-hover glass-card paper-card paper-toggle rounded-2xl">
+        <summary>
+          <div class="flex flex-wrap items-start justify-between gap-4 mb-4">
+            <div class="max-w-3xl">
+              <h3 class="font-heading font-semibold text-xl text-primary leading-snug">SoccerStreamer: A Mamba-Augmented Streaming Framework for Causal Reasoning over Full-Match Soccer Videos</h3>
+              <p class="text-sm text-zinc-500 mt-3">第一作者 · 大连交通大学 &amp; 咪咕视讯科技有限公司</p>
+            </div>
+            <div class="flex flex-wrap gap-2">
+              <span class="soft-tag px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs font-semibold whitespace-nowrap">AAAI 2027 在投</span>
+              <span class="soft-tag px-3 py-1 bg-red-100 text-red-700 rounded-full text-xs font-semibold whitespace-nowrap">CCF-A</span>
+              <span class="soft-tag px-3 py-1 bg-blue-100 text-accent rounded-full text-xs font-semibold whitespace-nowrap">第一作者</span>
+            </div>
+          </div>
+
+          <p class="text-sm text-zinc-600 leading-relaxed max-w-4xl">
+            面向足球直播的流式因果视频理解任务，提出基于 Mamba 时序投影器的 VLM 框架，让模型仅依据已播出画面完成实时问答与时序推理。
+          </p>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-5">
+            <div class="metric-card rounded-xl p-4">
+              <p class="font-heading text-2xl font-bold text-primary">32×</p>
+              <p class="text-xs text-zinc-400 mt-1">视觉 token 压缩</p>
+            </div>
+            <div class="metric-card rounded-xl p-4">
+              <p class="font-heading text-2xl font-bold text-primary">422</p>
+              <p class="text-xs text-zinc-400 mt-1">完整比赛数据</p>
+            </div>
+            <div class="metric-card rounded-xl p-4">
+              <p class="font-heading text-2xl font-bold text-primary">12万+</p>
+              <p class="text-xs text-zinc-400 mt-1">QA 模板</p>
+            </div>
+          </div>
+
+          <div class="mt-5 inline-flex items-center gap-2 text-xs font-semibold text-accent">
+            <span class="paper-open-label">展开详情</span>
+            <span class="paper-close-label">收起详情</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="paper-chevron w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+        </summary>
+
+        <div class="paper-toggle-body">
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-5 text-sm text-zinc-600 leading-relaxed">
+            <div>
+              <h4 class="font-semibold text-primary mb-2">核心贡献</h4>
+              <ul class="space-y-1.5 ml-4 list-disc list-outside text-zinc-500">
+                <li>提出 <strong class="text-zinc-700">以 Mamba-3 为基础的时序投影器</strong>（Mamba-3 + SwiGLU），在视觉 token 进入 LLM 前显式完成跨帧时序混合。</li>
+                <li>通过系统性消融实验确定最优压缩配置，在 MatchTime-Caption 任务上以约 <strong class="text-zinc-700">32× token 压缩</strong> 保持接近无压缩最优水平。</li>
+                <li>构建严格的流式因果 QA 协议，约束模型只能访问问题时间戳之前的视频内容。</li>
+              </ul>
+            </div>
+
+            <div>
+              <h4 class="font-semibold text-primary mb-2">数据集与训练</h4>
+              <ul class="space-y-1.5 ml-4 list-disc list-outside text-zinc-500">
+                <li>覆盖 <strong class="text-zinc-700">422 场</strong>完整比赛，包含 <strong class="text-zinc-700">12 万+</strong> QA 模板与 <strong class="text-zinc-700">3.2 万+</strong> 固定 QA。</li>
+                <li>按 short / mid / long 三级记忆延迟分层，覆盖时间段描述、事件计数、首次事件时间等时序推理任务。</li>
+                <li>采用四阶段课程训练：视觉语言对齐 → 通用多模态 SFT → 足球领域适配 → 完整比赛流式 QA。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <details class="reveal card-hover glass-card paper-card paper-warm paper-toggle rounded-2xl">
+        <summary>
+          <div class="flex flex-wrap items-start justify-between gap-4 mb-4">
+            <div class="max-w-3xl">
+              <h3 class="font-heading font-semibold text-xl text-primary leading-snug">ARRT-DETR: Attention-Residual RT-DETR for Small-Object Detection</h3>
+              <p class="text-sm text-zinc-500 mt-3">第一作者 · 大连交通大学、复旦大学、上海工程技术大学、西交利物浦大学</p>
+            </div>
+            <div class="flex flex-wrap gap-2">
+              <span class="soft-tag px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs font-semibold whitespace-nowrap">BMVC 在投</span>
+              <span class="soft-tag px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-semibold whitespace-nowrap">CCF-C</span>
+              <span class="soft-tag px-3 py-1 bg-blue-100 text-accent rounded-full text-xs font-semibold whitespace-nowrap">第一作者</span>
+            </div>
+          </div>
+
+          <p class="text-sm text-zinc-600 leading-relaxed max-w-4xl">
+            面向无人机航拍与密集交通场景的小目标检测问题，重新设计 RT-DETR decoder 的跨层残差信息流，缓解深层 refinement 中弱定位线索被削弱的问题。
+          </p>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-5">
+            <div class="metric-card rounded-xl p-4">
+              <p class="font-heading text-2xl font-bold text-primary">+7.2</p>
+              <p class="text-xs text-zinc-400 mt-1">mAP50 vs. RT-DETR-L</p>
+            </div>
+            <div class="metric-card rounded-xl p-4">
+              <p class="font-heading text-2xl font-bold text-primary">+5.2</p>
+              <p class="text-xs text-zinc-400 mt-1">mAP50-95 vs. RT-DETR-L</p>
+            </div>
+            <div class="metric-card rounded-xl p-4">
+              <p class="font-heading text-2xl font-bold text-primary">23.5ms</p>
+              <p class="text-xs text-zinc-400 mt-1">VisDrone2019 延迟</p>
+            </div>
+          </div>
+
+          <div class="mt-5 inline-flex items-center gap-2 text-xs font-semibold text-accent">
+            <span class="paper-open-label">展开详情</span>
+            <span class="paper-close-label">收起详情</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="paper-chevron w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+        </summary>
+
+        <div class="paper-toggle-body">
+          <div class="space-y-5 pt-5 text-sm text-zinc-600 leading-relaxed">
+            <div>
+              <h4 class="font-semibold text-primary mb-2">方法贡献</h4>
+              <ul class="space-y-1.5 ml-4 list-disc list-outside text-zinc-500">
+                <li>提出 <strong class="text-zinc-700">ARRT-DETR</strong>，在保持 RT-DETR backbone、hybrid encoder 和检测头不变的前提下，将 decoder 中的标准加性残差替换为 <strong class="text-zinc-700">Attention Residual</strong>。</li>
+                <li>让每层 decoder 根据当前 query 内容自适应检索并聚合历史 decoder 状态，缓解小目标定位信息在多层迭代中的丢失。</li>
+                <li>设计 block-wise 近似版本 <strong class="text-zinc-700">BARDETR</strong>，用于分析跨层历史聚合在精度与效率之间的权衡。</li>
+              </ul>
+            </div>
+
+            <div>
+              <h4 class="font-semibold text-primary mb-2">实验结果</h4>
+              <p class="text-zinc-500">
+                在 VisDrone2019 小目标检测基准上，三层 decoder 的 ARRT-DETR 达到 <strong class="text-zinc-700">47.9 mAP50</strong> 与 <strong class="text-zinc-700">29.6 mAP50-95</strong>，相较 RT-DETR-L 在参数量、GFLOPs 和延迟更低的情况下取得更高检测精度。
+              </p>
+            </div>
+
+            <div class="flex flex-wrap gap-3 pt-1">
+              <a href="files/AR-RT-DETR.pdf" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-md text-xs font-medium hover:bg-zinc-800 transition-colors duration-200">
+                查看论文 PDF
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14 3h7m0 0v7m0-7L10 14"/><path stroke-linecap="round" stroke-linejoin="round" d="M5 5v14h14"/></svg>
+              </a>
+              <a href="https://github.com/H-X1n/ARDETR" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-4 py-2 border border-border rounded-md text-xs font-medium text-primary hover:bg-white transition-colors duration-200">
+                GitHub 代码
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+              </a>
+            </div>
+          </div>
+        </div>
+      </details>
+    </div>
+  </div>
+</section>
