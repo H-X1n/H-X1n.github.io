@@ -1,0 +1,168 @@
+<!-- ===== PROJECTS ===== -->
+<section id="projects" class="py-24 sm:py-32 bg-white">
+  <div class="max-w-6xl mx-auto px-6">
+    <h2 class="reveal font-heading text-3xl sm:text-4xl font-bold text-primary mb-4">核心项目</h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Project 1: SoccerStreamer (MAIN) -->
+      <article class="reveal group card-hover glass-card feature-card rounded-2xl overflow-hidden md:col-span-2">
+        <div class="grid md:grid-cols-5">
+          <div class="project-media-slot md:col-span-2 flex items-center justify-center min-h-[260px] p-6 md:border-r border-b md:border-b-0 border-border">
+            <figure class="project-media-frame project-media-frame-large" aria-label="SoccerStreamer 项目演示">
+              <img src="assets/project-1-demo.gif" alt="SoccerStreamer 足球直播问答演示" loading="lazy">
+            </figure>
+          </div>
+          <div class="md:col-span-3 p-6 sm:p-8 flex flex-col justify-center">
+            <h3 class="font-heading font-semibold text-lg text-primary mb-3 group-hover:text-accent transition-colors duration-200">
+              (实习项目)SoccerStreamer：足球直播场景下的ChatModel
+            </h3>
+            <p class="text-sm text-zinc-500 mb-4 leading-relaxed">
+              针对足球直播中"看懂全场、回答用户提问"的业务需求，设计并实现了一套流式因果视频语言模型系统。用户可通过自然语言对正在直播的比赛进行实时提问（如"刚才那个进球是第几分钟？""上半场一共几次角球？"），模型仅基于已播出画面作答。
+            </p>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+              <div class="project-metric rounded-xl p-3">
+                <p class="font-heading text-xl font-bold text-primary">32×</p>
+                <p class="text-[11px] text-zinc-400 mt-1">token 压缩</p>
+              </div>
+              <div class="project-metric rounded-xl p-3">
+                <p class="font-heading text-xl font-bold text-primary">422</p>
+                <p class="text-[11px] text-zinc-400 mt-1">完整比赛</p>
+              </div>
+              <div class="project-metric rounded-xl p-3">
+                <p class="font-heading text-xl font-bold text-primary">12万+</p>
+                <p class="text-[11px] text-zinc-400 mt-1">QA 模板</p>
+              </div>
+              <div class="project-metric rounded-xl p-3">
+                <p class="font-heading text-xl font-bold text-primary">8×</p>
+                <p class="text-[11px] text-zinc-400 mt-1">A100 训练</p>
+              </div>
+            </div>
+            <div class="text-sm text-zinc-600 mb-4 space-y-1.5">
+              <p><strong class="text-primary">核心创新：</strong>以 Qwen2.5-VL-7B 为基座，自研以mamba-3为基础时序投影器（Mamba + SwiGLU），在视觉 token 进入 LLM 前显式建模跨帧时序关系，替换原生投影器。</p>
+              <p><strong class="text-primary">训练策略：</strong>四阶段课程训练（视觉语言对齐 → 通用多模态 SFT → 足球领域适配 → 全场流式 QA），冻结视觉编码器、仅训练投影器与 LLM LoRA，8×A100 分布式训练。</p>
+            </div>
+            <div class="flex flex-wrap gap-2">
+              <span class="soft-tag px-2.5 py-1 bg-blue-50 text-accent rounded-md text-xs font-medium">Qwen2.5-VL-7B</span>
+              <span class="soft-tag px-2.5 py-1 bg-blue-50 text-accent rounded-md text-xs font-medium">Mamba</span>
+              <span class="soft-tag px-2.5 py-1 bg-blue-50 text-accent rounded-md text-xs font-medium">LoRA</span>
+              <span class="soft-tag px-2.5 py-1 bg-blue-50 text-accent rounded-md text-xs font-medium">PyTorch</span>
+              <span class="soft-tag px-2.5 py-1 bg-blue-50 text-accent rounded-md text-xs font-medium">DeepSpeed</span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Project 2: Transformer Translation -->
+      <article class="reveal group card-hover glass-card feature-card project-card-reverse rounded-2xl overflow-hidden md:col-span-2">
+        <div class="grid md:grid-cols-5">
+          <div class="project-media-slot md:order-2 md:col-span-2 flex items-center justify-center min-h-[320px] p-6 md:border-l border-b md:border-b-0 border-border">
+            <figure class="project-media-frame project-media-frame-tall project-media-frame-large" aria-label="Transformer 翻译项目演示">
+              <img src="assets/project-2-demo.gif" alt="Transformer 中英机器翻译在线演示" loading="lazy">
+            </figure>
+          </div>
+
+          <div class="project-copy md:order-1 md:col-span-3 p-6 sm:p-8 flex flex-col justify-center">
+            <h3 class="font-heading font-semibold text-lg text-primary mb-3 group-hover:text-accent transition-colors duration-200">
+              基于 Transformer 架构的中英机器翻译系统
+            </h3>
+            <p class="text-sm text-zinc-500 mb-4 leading-relaxed">
+              参照《Attention Is All You Need》从零实现 Encoder-Decoder Transformer 翻译模型，完成中英双语 Tokenizer、平行语料清洗对齐、训练调优与 Hugging Face 在线部署，形成从模型构建到应用上线的完整闭环。
+            </p>
+
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+              <div class="project-metric rounded-xl p-3">
+                <p class="font-heading text-xl font-bold text-primary">6 + 6</p>
+                <p class="text-[11px] text-zinc-400 mt-1">Encoder / Decoder</p>
+              </div>
+              <div class="project-metric rounded-xl p-3">
+                <p class="font-heading text-xl font-bold text-primary">7.5万+</p>
+                <p class="text-[11px] text-zinc-400 mt-1">中英句对</p>
+              </div>
+              <div class="project-metric rounded-xl p-3">
+                <p class="font-heading text-xl font-bold text-primary">AdamW</p>
+                <p class="text-[11px] text-zinc-400 mt-1">训练优化</p>
+              </div>
+              <div class="project-metric rounded-xl p-3">
+                <p class="font-heading text-xl font-bold text-primary">HF</p>
+                <p class="text-[11px] text-zinc-400 mt-1">在线应用</p>
+              </div>
+            </div>
+
+            <div class="text-sm text-zinc-600 mb-4 space-y-1.5">
+              <p><strong class="text-primary">模型实现：</strong>完整实现 6 层 Encoder 与 6 层 Decoder 的 Transformer 架构，覆盖多头注意力、位置编码、残差连接与前馈网络等核心组件。</p>
+              <p><strong class="text-primary">训练与部署：</strong>整理 75,000+ 对中英文短句数据，采用 AdamW 与余弦退火学习率策略进行多轮调优，并部署为 Hugging Face 可交互应用。</p>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="soft-tag px-2.5 py-1 bg-blue-50 text-accent rounded-md text-xs font-medium">Transformer</span>
+              <span class="soft-tag px-2.5 py-1 bg-blue-50 text-accent rounded-md text-xs font-medium">Machine Translation</span>
+              <span class="soft-tag px-2.5 py-1 bg-blue-50 text-accent rounded-md text-xs font-medium">Tokenizer</span>
+              <span class="soft-tag px-2.5 py-1 bg-blue-50 text-accent rounded-md text-xs font-medium">AdamW</span>
+              <span class="soft-tag px-2.5 py-1 bg-blue-50 text-accent rounded-md text-xs font-medium">Hugging Face</span>
+              <a href="https://huggingface.co/spaces/Huangxin14/translator_zh-en" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-3 py-1.5 border border-border rounded-md text-xs font-medium text-primary hover:bg-white transition-colors duration-200">
+                在线体验
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14 3h7m0 0v7m0-7L10 14"/><path stroke-linecap="round" stroke-linejoin="round" d="M5 5v14h14"/></svg>
+              </a>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Project 3: Resume Agent Studio -->
+      <article class="reveal group card-hover glass-card feature-card rounded-2xl overflow-hidden md:col-span-2">
+        <div class="grid md:grid-cols-5">
+          <div class="project-media-slot md:col-span-2 flex items-center justify-center min-h-[320px] p-6 md:border-r border-b md:border-b-0 border-border">
+            <figure class="project-media-frame project-media-frame-large" aria-label="Resume Agent Studio 项目演示">
+              <img src="assets/project-3-demo.gif" alt="Resume Agent Studio 简历优化与模拟面试系统演示" loading="lazy">
+            </figure>
+          </div>
+
+          <div class="md:col-span-3 p-6 sm:p-8 flex flex-col justify-center">
+            <h3 class="font-heading font-semibold text-lg text-primary mb-3 group-hover:text-accent transition-colors duration-200">
+              Resume Agent Studio：AI Agent 简历优化与模拟面试系统
+            </h3>
+            <p class="text-sm text-zinc-500 mb-4 leading-relaxed">
+              面向 AI 算法求职场景，搭建基于 LLM 的求职辅助工作流，根据用户资料库与岗位 JD 自动完成简历定制、匹配度评估、优化建议生成与模拟面试准备，覆盖从投递前筛选到面试前复盘的完整流程。
+            </p>
+
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+              <div class="project-metric rounded-xl p-3">
+                <p class="font-heading text-xl font-bold text-primary">3 阶段</p>
+                <p class="text-[11px] text-zinc-400 mt-1">Agent 工作流</p>
+              </div>
+              <div class="project-metric rounded-xl p-3">
+                <p class="font-heading text-xl font-bold text-primary">JSON</p>
+                <p class="text-[11px] text-zinc-400 mt-1">结构化输出</p>
+              </div>
+              <div class="project-metric rounded-xl p-3">
+                <p class="font-heading text-xl font-bold text-primary">JD</p>
+                <p class="text-[11px] text-zinc-400 mt-1">匹配分析</p>
+              </div>
+              <div class="project-metric rounded-xl p-3">
+                <p class="font-heading text-xl font-bold text-primary">多模型</p>
+                <p class="text-[11px] text-zinc-400 mt-1">灵活切换</p>
+              </div>
+            </div>
+
+            <div class="text-sm text-zinc-600 mb-4 space-y-1.5">
+              <p><strong class="text-primary">Agent 编排：</strong>将任务拆分为简历整理 Agent、简历评估 Agent 与面试官 Agent，通过结构化 Prompt 统一用户资料、项目经历、论文成果和岗位 JD 上下文，约束模型基于真实信息生成内容。</p>
+              <p><strong class="text-primary">工程稳定性：</strong>设计 LLM JSON 输出协议与解析、修复、归一化流程，支持 DeepSeek、OpenAI-compatible API、Ollama、LM Studio 等模型来源接入，并通过连接测试验证模型可用性。</p>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="soft-tag px-2.5 py-1 bg-blue-50 text-accent rounded-md text-xs font-medium">AI Agent</span>
+              <span class="soft-tag px-2.5 py-1 bg-blue-50 text-accent rounded-md text-xs font-medium">Prompt Engineering</span>
+              <span class="soft-tag px-2.5 py-1 bg-blue-50 text-accent rounded-md text-xs font-medium">JSON Output</span>
+              <span class="soft-tag px-2.5 py-1 bg-blue-50 text-accent rounded-md text-xs font-medium">JD Matching</span>
+              <span class="soft-tag px-2.5 py-1 bg-blue-50 text-accent rounded-md text-xs font-medium">Ollama</span>
+              <a href="https://github.com/H-X1n/Interview-master" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-3 py-1.5 border border-border rounded-md text-xs font-medium text-primary hover:bg-white transition-colors duration-200">
+                GitHub
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14 3h7m0 0v7m0-7L10 14"/><path stroke-linecap="round" stroke-linejoin="round" d="M5 5v14h14"/></svg>
+              </a>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>

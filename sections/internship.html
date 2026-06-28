@@ -1,0 +1,120 @@
+<!-- ===== INTERNSHIP ===== -->
+<section id="internship" class="py-24 sm:py-32">
+  <div class="max-w-6xl mx-auto px-6">
+    <h2 class="reveal font-heading text-3xl sm:text-4xl font-bold text-primary mb-4">实习经历</h2>
+
+    <div class="reveal glass-card rounded-2xl p-6 sm:p-8 mb-8">
+      <div class="flex flex-wrap items-center gap-3 mb-6">
+        <div class="company-logo-frame skill-icon w-12 h-12 rounded-xl flex items-center justify-center">
+          <img src="assets/咪咕视讯科技有限公司.png" alt="咪咕视讯科技有限公司 Logo">
+        </div>
+        <div>
+          <h3 class="font-heading font-semibold text-xl text-primary">咪咕视讯科技有限公司</h3>
+          <p class="text-sm text-zinc-500">AI 算法工程师（实习生） · 2026.01 – 2026.07</p>
+        </div>
+      </div>
+
+      <div class="space-y-6">
+        <!-- 项目1: SoccerStreamer -->
+        <div class="solid-card highlight-card internship-project-card rounded-xl p-5">
+          <div class="internship-project-title flex flex-wrap items-start justify-between gap-2">
+            <h4 class="font-heading font-semibold text-primary">
+              <span class="soft-tag px-2 py-0.5 bg-yellow-100 text-yellow-700 rounded text-xs font-semibold mr-2">核心项目</span>
+              SoccerStreamer：足球直播场景下的ChatModel
+            </h4>
+            <button class="internship-project-toggle" type="button" aria-expanded="false" aria-label="展开项目详情">
+              <span class="internship-project-arrow" aria-hidden="true"></span>
+            </button>
+          </div>
+          <div class="internship-project-details">
+            <p class="text-sm text-zinc-600 mb-3 leading-relaxed">
+              针对咪咕足球直播中"看懂全场、回答用户提问"的业务需求，设计并实现了一套流式因果视频语言模型系统，支持用户以自然语言对正在直播的比赛进行实时提问（如"刚才那个进球是第几分钟？""上半场一共几次角球？"），模型仅基于已播出画面作答。
+            </p>
+            <ul class="space-y-1.5 text-sm text-zinc-500 ml-4 list-disc list-outside mb-3">
+              <li>以 Qwen2.5-VL-7B 为基座，自研 <strong class="text-zinc-700">以mamba为基础的时序投影器</strong>（Mamba + SwiGLU），在视觉 token 进入 LLM 前显式建模跨帧时序关系</li>
+              <li>Spatial Pool 4×4 + Temporal Sampling → 约 <strong class="text-zinc-700">32× token 压缩</strong>，大幅降低流式推理的显存与延迟开销</li>
+              <li>构建大规模流式足球 QA 数据集：覆盖 <strong class="text-zinc-700">422 场</strong>完整比赛，<strong class="text-zinc-700">12 万+</strong> QA 模板与 <strong class="text-zinc-700">3.2 万+</strong> 固定 QA，按 short/mid/long 三级记忆延迟分层</li>
+              <li>制定四阶段课程训练策略（视觉语言对齐 → 通用多模态 SFT → 足球领域适配 → 全场流式 QA），冻结视觉编码器、仅训练投影器与 LLM LoRA，<strong class="text-zinc-700">8×A100</strong> 分布式训练</li>
+            </ul>
+            <div class="flex flex-wrap gap-2">
+              <span class="soft-tag px-2.5 py-1 bg-blue-50 text-accent rounded-md text-xs font-medium">Qwen2.5-VL-7B</span>
+              <span class="soft-tag px-2.5 py-1 bg-blue-50 text-accent rounded-md text-xs font-medium">Mamba</span>
+              <span class="soft-tag px-2.5 py-1 bg-blue-50 text-accent rounded-md text-xs font-medium">LoRA</span>
+              <span class="soft-tag px-2.5 py-1 bg-blue-50 text-accent rounded-md text-xs font-medium">FSDP</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 项目2: AI解说员 -->
+        <div class="solid-card internship-project-card rounded-xl p-5">
+          <div class="internship-project-title flex items-start justify-between gap-3">
+            <h4 class="font-heading font-semibold text-primary">世界杯直播流 AI 解说员</h4>
+            <button class="internship-project-toggle" type="button" aria-expanded="false" aria-label="展开项目详情">
+              <span class="internship-project-arrow" aria-hidden="true"></span>
+            </button>
+          </div>
+          <div class="internship-project-details">
+            <ul class="space-y-1.5 text-sm text-zinc-500 ml-4 list-disc list-outside mb-3">
+              <li>负责多模态数据工程：采集世界杯球员高清图像与职业生涯文本，爬取 B 站足球 UP 主解说视频并提取字幕，构建<strong class="text-zinc-700">百万字级多风格解说语料库</strong></li>
+              <li>搭建直播流实时处理流水线，基于目标检测算法实现球员特写镜头精准识别与截取，集成 <strong class="text-zinc-700">InsightFace</strong> 完成球员身份毫秒级识别</li>
+              <li>构建两阶段 RAG 检索增强系统：<strong class="text-zinc-700">BGE-M3</strong> 向量检索 + <strong class="text-zinc-700">BGE-Reranker-v2-m3</strong> 语义重排，提升球员信息检索准确率</li>
+              <li>基于多风格解说语料蒸馏生成定制化系统提示词，对接 <strong class="text-zinc-700">Qwen3.5-4B</strong> 实现专业/激情/幽默多风格无缝切换</li>
+            </ul>
+            <div class="flex flex-wrap gap-2">
+              <span class="soft-tag px-2.5 py-1 bg-blue-50 text-accent rounded-md text-xs font-medium">RAG</span>
+              <span class="soft-tag px-2.5 py-1 bg-blue-50 text-accent rounded-md text-xs font-medium">BGE-M3</span>
+              <span class="soft-tag px-2.5 py-1 bg-blue-50 text-accent rounded-md text-xs font-medium">BGE-Reranker</span>
+              <span class="soft-tag px-2.5 py-1 bg-blue-50 text-accent rounded-md text-xs font-medium">InsightFace</span>
+              <span class="soft-tag px-2.5 py-1 bg-blue-50 text-accent rounded-md text-xs font-medium">Qwen3.5-4B</span>
+              <span class="soft-tag px-2.5 py-1 bg-blue-50 text-accent rounded-md text-xs font-medium">SGLang</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 项目3: 球员检测 -->
+        <div class="solid-card internship-project-card rounded-xl p-5">
+          <div class="internship-project-title flex items-start justify-between gap-3">
+            <h4 class="font-heading font-semibold text-primary">球员目标检测系统</h4>
+            <button class="internship-project-toggle" type="button" aria-expanded="false" aria-label="展开项目详情">
+              <span class="internship-project-arrow" aria-hidden="true"></span>
+            </button>
+          </div>
+          <div class="internship-project-details">
+            <ul class="space-y-1.5 text-sm text-zinc-500 ml-4 list-disc list-outside mb-3">
+              <li>基于 <strong class="text-zinc-700">YOLO</strong> 模型构建球员目标检测系统，针对足球比赛场景通过数据增强和迁移学习提升检测精度</li>
+              <li>在密集人群、远距离视角、运动模糊等复杂场景下保持稳定检测，满足赛事实时分析需求</li>
+            </ul>
+            <div class="flex flex-wrap gap-2">
+              <span class="soft-tag px-2.5 py-1 bg-blue-50 text-accent rounded-md text-xs font-medium">YOLO</span>
+              <span class="soft-tag px-2.5 py-1 bg-blue-50 text-accent rounded-md text-xs font-medium">OpenCV</span>
+              <span class="soft-tag px-2.5 py-1 bg-blue-50 text-accent rounded-md text-xs font-medium">数据增强</span>
+              <span class="soft-tag px-2.5 py-1 bg-blue-50 text-accent rounded-md text-xs font-medium">迁移学习</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 项目4: UI识别 -->
+        <div class="solid-card internship-project-card rounded-xl p-5">
+          <div class="internship-project-title flex items-start justify-between gap-3">
+            <h4 class="font-heading font-semibold text-primary">足球比赛 UI 自动识别</h4>
+            <button class="internship-project-toggle" type="button" aria-expanded="false" aria-label="展开项目详情">
+              <span class="internship-project-arrow" aria-hidden="true"></span>
+            </button>
+          </div>
+          <div class="internship-project-details">
+            <ul class="space-y-1.5 text-sm text-zinc-500 ml-4 list-disc list-outside mb-3">
+              <li>运用 <strong class="text-zinc-700">PaddleOCR</strong> 实现足球直播画面中比分、队名的自动化识别，针对复杂背景、字体变形、遮挡等场景专项优化</li>
+              <li>完成赛事基础数据的自动采集，为下游分析系统提供结构化数据输入</li>
+            </ul>
+            <div class="flex flex-wrap gap-2">
+              <span class="soft-tag px-2.5 py-1 bg-blue-50 text-accent rounded-md text-xs font-medium">PaddleOCR</span>
+              <span class="soft-tag px-2.5 py-1 bg-blue-50 text-accent rounded-md text-xs font-medium">PaddlePaddle</span>
+              <span class="soft-tag px-2.5 py-1 bg-blue-50 text-accent rounded-md text-xs font-medium">场景优化</span>
+              <span class="soft-tag px-2.5 py-1 bg-blue-50 text-accent rounded-md text-xs font-medium">自动化采集</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
