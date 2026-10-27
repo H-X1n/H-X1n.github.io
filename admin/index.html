@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://api.github.com; frame-src 'self'; base-uri 'self'; form-action 'none'">
+<title>网站编辑器 · 黄鑫</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='3' y='3' width='58' height='58' fill='%23FF7AB6' stroke='%230A0A0A' stroke-width='6'/%3E%3Ctext x='32' y='43' font-family='Arial,sans-serif' font-weight='700' font-size='28' text-anchor='middle' fill='%230A0A0A'%3EHX%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="editor.css">
+</head>
+<body>
+<header class="bar" id="bar">
+<div class="brand"><span class="mark" aria-hidden="true">HX</span><b>网站编辑器</b></div>
+<span class="status" id="status" role="status">正在加载…</span>
+<div class="tools">
+<div class="seg" role="group" aria-label="预览宽度"><button type="button" data-view="desktop" aria-pressed="true">桌面</button><button type="button" data-view="mobile" aria-pressed="false">手机</button></div>
+<button type="button" class="btn" id="btn-undo" disabled>撤销</button>
+<button type="button" class="btn" id="btn-reload">重新加载</button>
+<button type="button" class="btn" id="btn-export">导出 HTML</button>
+<a class="btn" href="/" target="_blank" rel="noopener">查看网站</a>
+<button type="button" class="btn" id="btn-account">登录</button>
+<button type="button" class="btn primary" id="btn-publish" disabled>发布</button>
+</div>
+</header>
+
+<main class="stage" id="stage">
+<div class="frame-wrap"><iframe id="site" title="网站预览：点击文字即可编辑"></iframe></div>
+<p class="hint">点击文字直接修改 · Enter 完成 · Shift+Enter 换行 · Esc 退出 · 点图片可替换 · 点卡片空白处可复制 / 删除整块</p>
+</main>
+
+<aside class="panel" id="panel" aria-label="属性面板" hidden>
+<div class="panel-head"><span id="panel-title">已选中</span><button type="button" class="panel-x" id="panel-close" aria-label="关闭面板">×</button></div>
+<div class="panel-body" id="panel-body"></div>
+</aside>
+<div class="modal" id="login" role="dialog" aria-modal="true" aria-labelledby="login-title" hidden>
+<div class="card">
+<div class="card-head"><h2 id="login-title">连接 GitHub</h2></div>
+<div class="card-body">
+<p>编辑器通过 GitHub API 直接修改仓库 <b>H-X1n/H-X1n.github.io</b>，需要一个只授权这个仓库的 token：</p>
+<ol>
+<li><a href="https://github.com/settings/personal-access-tokens/new?name=HX+site+editor&amp;description=Edit+h-x1n.github.io+from+the+admin+page&amp;expires_in=90&amp;contents=write" target="_blank" rel="noopener noreferrer">打开 GitHub 创建 token 页面</a>（已预填名称、90 天有效期和 Contents 读写权限）</li>
+<li>Repository access 选 <b>Only select repositories</b>，勾选 <b>H-X1n.github.io</b></li>
+<li>确认 Permissions 里 <b>Contents</b> 是 <b>Read and write</b>，点 Generate token</li>
+<li>复制 <code>github_pat_</code> 开头的 token，粘贴到下面</li>
+</ol>
+<label class="field">Token<input type="password" id="token-input" autocomplete="off" spellcheck="false" placeholder="github_pat_…"></label>
+<label class="check"><input type="checkbox" id="token-remember" checked>在这台设备上记住（公共电脑请取消勾选）</label>
+<p class="note">token 只保存在当前浏览器里，只会发给 api.github.com，不经过任何第三方服务器。</p>
+<p class="err" id="login-error" hidden></p>
+</div>
+<div class="card-foot">
+<button type="button" class="btn danger" id="login-logout" hidden>退出登录</button>
+<button type="button" class="btn" id="login-skip">先不登录，只预览</button>
+<button type="button" class="btn primary" id="login-ok">连接</button>
+</div>
+</div>
+</div>
+
+<div class="modal" id="pub" role="dialog" aria-modal="true" aria-labelledby="pub-title" hidden>
+<div class="card">
+<div class="card-head"><h2 id="pub-title">发布到网站</h2></div>
+<div class="card-body">
+<p>以下文件会作为<b>一次提交</b>推送到 <b id="pub-branch">master</b> 分支，GitHub Pages 通常 1 分钟内更新：</p>
+<ul class="changes" id="pub-list"></ul>
+<label class="field">提交说明<input type="text" id="pub-msg" maxlength="200" value="通过网站编辑器更新内容"></label>
+<p class="err" id="pub-error" hidden></p>
+</div>
+<div class="card-foot">
+<button type="button" class="btn" id="pub-cancel">取消</button>
+<button type="button" class="btn primary" id="pub-ok">确认发布</button>
+</div>
+</div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<input type="file" id="file-input" hidden>
+<script src="editor.js"></script>
+</body>
+</html>
