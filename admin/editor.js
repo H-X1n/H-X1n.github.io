@@ -12,7 +12,7 @@
     path: 'index.html',
     api: 'https://api.github.com',
     tokenKey: 'hx-editor-token',
-    maxImage: 10 * 1024 * 1024,
+    maxImage: 20 * 1024 * 1024,
     maxFile: 50 * 1024 * 1024
   };
   var LOCALHOST = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
@@ -25,14 +25,22 @@
   var INLINE = /^(A|STRONG|B|EM|I|SPAN|BR|WBR|SMALL|CODE|SUP|SUB|MARK|U|S|ABBR|TIME)$/;
   var MULTILINE = /^(P|LI|DD|BLOCKQUOTE)$/;
   // 可以复制 / 移动 / 删除的“区块”
-  var BLOCK_SEL = 'li, article, details, .facts > div';
+  var BLOCK_SEL = 'li, article, details, .facts > div, a.btn';
   var DUP_MARQUEE = '.marquee-list[aria-hidden="true"]';
+  // 卡片颜色：带 c-* 配色类的元素改 --c / --c2 / --c3；这些纸面卡片改背景色；板块改 --accent
+  var BG_SEL = '.doc-head, .stamp, .doc, .acc-item, .intern-head, .intern, .comp, .mega';
+  var PALETTE = [['黄', 'var(--yellow)', '#FFD23F'], ['粉', 'var(--pink)', '#FF7AB6'], ['蓝', 'var(--blue)', '#5B8CFF'],
+    ['绿', 'var(--green)', '#4ADE80'], ['橙', 'var(--orange)', '#FF8A3D'], ['白', 'var(--paper)', '#FFFFFF'], ['米', 'var(--bg)', '#FFF6E5']];
+  var TEXT_COLORS = [['黑', 'var(--ink)', '#0A0A0A'], ['白', '#FFFFFF', '#FFFFFF'], ['红', '#E5484D', '#E5484D'], ['蓝', '#2F5BEA', '#2F5BEA'],
+    ['粉', '#D6337A', '#D6337A'], ['橙', '#E5641A', '#E5641A'], ['绿', '#15803D', '#15803D'], ['灰', '#6B6B6B', '#6B6B6B']];
+  // 整段字号用 zoom 等比放大，不会破坏原有的响应式字号；选中局部文字时用相对父级的 em
+  var ZOOMS = [0.7, 0.8, 0.9, 1, 1.15, 1.3, 1.5, 1.75, 2];
   var BOOL_ATTRS = /\s(open|download|hidden|defer|async|disabled|checked|selected|required|multiple|readonly|autofocus|novalidate|reversed|controls|loop|muted|playsinline)=""/g;
   var SVG_EMPTY = /<(path|use|circle|rect|line|polyline|polygon|ellipse|stop)(\s[^<>]*)?><\/\1>/g;
   var NAMES = {
     H1: '大标题', H2: '标题', H3: '小标题', H4: '小标题', P: '段落', LI: '列表项', DT: '标签', DD: '说明',
     A: '链接', IMG: '图片', SUMMARY: '折叠标题', ARTICLE: '卡片', DETAILS: '折叠块', DIV: '区块',
-    SPAN: '文字', B: '文字', SMALL: '文字', STRONG: '加粗文字', FIGCAPTION: '图片说明'
+    SPAN: '文字', B: '文字', SMALL: '文字', STRONG: '加粗文字', FIGCAPTION: '图片说明', SECTION: '板块', UL: '列表'
   };
   // 注入 iframe 的编辑态样式，发布时会删掉
   var EDIT_CSS = [
@@ -56,6 +64,10 @@
     loginErr: $('#login-error'), loginOk: $('#login-ok'), loginSkip: $('#login-skip'), logout: $('#login-logout'),
     pub: $('#pub'), pubList: $('#pub-list'), pubMsg: $('#pub-msg'), pubErr: $('#pub-error'), pubOk: $('#pub-ok'),
     pubCancel: $('#pub-cancel'), pubBranch: $('#pub-branch')
+  };
+  var cropUI = {
+    el: $('#crop'), img: $('#crop-img'), box: $('#crop-box'), info: $('#crop-info'),
+    ok: $('#crop-ok'), skip: $('#crop-skip'), cancel: $('#crop-cancel'), ratios: document.querySelectorAll('#crop [data-ratio]')
   };
 
   var S = {
@@ -201,7 +213,7 @@
     root.querySelectorAll('details[data-hx-open]').forEach(function (n) {
       if (n.getAttribute('data-hx-open') === '1') n.setAttribute('open', ''); else n.removeAttribute('open');
     });
-    ['contenteditable', 'data-hx-open', 'data-hx-hover', 'data-hx-sel'].forEach(function (a) {
+    ['contenteditable', 'data-hx-open', 'data-hx-hover', 'data-hx-sel', 'data-hx-keep'].forEach(function (a) {
       root.querySelectorAll('[' + a + ']').forEach(function (n) { n.removeAttribute(a); });
     });
     // 跑马灯第二组是第一组的无障碍隐藏副本，保持同步
@@ -250,6 +262,7 @@
   // 浏览器编辑时会自动插入带 style 的 span / font、&nbsp; 等，结束编辑时清掉，只保留原有标签和换行
   function tidy(el) {
     Array.prototype.slice.call(el.querySelectorAll('*')).reverse().forEach(function (n) {
+      if (n.hasAttribute('data-hx-keep')) { n.removeAttribute('data-hx-keep'); return; }  // 编辑器自己加的文字样式
       if (S.editNodes.has(n)) return;
       if (n.tagName === 'BR') { if (MULTILINE.test(el.tagName)) n.removeAttribute('style'); else n.remove(); return; }
       while (n.firstChild) n.parentNode.insertBefore(n.firstChild, n);
@@ -415,25 +428,38 @@
   }
   function safeHref(v) {
     if (/^(https?:|mailto:|tel:)/i.test(v)) return true;
-    if (/^[a-z][a-z0-9+.-]*:/i.test(v) || /^\/\//.test(v)) return false;
+    if (/^[a-z][a-z0-9+.-]*:/i.test(v) || /^\/\//.test(v) || isLocalPath(v)) return false;
     return v.length > 0;
+  }
+  // 用户误把本机文件路径填进链接时识别出来（网站访问者打不开这些地址）
+  function isLocalPath(v) {
+    return /^file:/i.test(v) || /^[a-z]:[\\/]/i.test(v) || /^\\\\/.test(v) || /^~[\\/]/.test(v) ||
+      /^\/(Users|home|private|var|tmp|Volumes|mnt|root)\//.test(v);
   }
   function closePanel() { ui.panel.hidden = true; ui.panelBody.innerHTML = ''; }
 
   function renderPanel() {
     if (!S.sel || !S.sel.isConnected) { closePanel(); return; }
-    var el = S.sel, a = currentLink(), img = el.tagName === 'IMG' ? el : null, b = S.block, h = [];
+    var el = S.sel, a = currentLink(), img = el.tagName === 'IMG' ? el : null, b = S.block, tt = textTarget(), ct = colorTarget(), h = [];
     ui.panelTitle.textContent = img ? '图片' : S.editing ? '正在编辑' + describe(el) : describe(b || el);
-    if (S.editing) {
-      h.push('<div class="group"><h3>文字</h3><p class="note">直接在页面上打字。Enter 完成，Esc 退出' +
-        (MULTILINE.test(el.tagName) ? '，Shift+Enter 换行' : '') + '。</p></div>');
-    } else if (isTextBlock(el)) {
-      h.push('<div class="group"><h3>文字</h3><div class="row"><button type="button" class="btn sm yellow" data-act="edit">编辑文字</button></div></div>');
+    if (tt) {
+      var z = parseFloat(tt.style.getPropertyValue('zoom')) || 1;
+      h.push('<div class="group"><h3>文字</h3>' + (S.editing
+        ? '<p class="note">直接在页面上打字。Enter 完成，Esc 退出' + (MULTILINE.test(tt.tagName) ? '，Shift+Enter 换行' : '') + '。</p>'
+        : '<div class="row"><button type="button" class="btn sm yellow" data-act="edit">编辑文字</button></div>') +
+        '<div class="row size-row"><span class="note">字号</span>' +
+        '<button type="button" class="btn sm" data-act="tsize" data-val="-1" aria-label="缩小字号">A−</button>' +
+        '<button type="button" class="btn sm" data-act="tsize" data-val="1" aria-label="放大字号">A＋</button>' +
+        '<button type="button" class="btn sm" data-act="tsize" data-val="0">默认</button><span class="note">整段 ×' + z + '</span></div>' +
+        '<p class="note">文字颜色</p>' + swatches('tcolor', 'color', TEXT_COLORS, tt.style.getPropertyValue('color')) +
+        '<p class="note">先在文字里拖选一部分再点，只改选中的字；不选则改整段。</p></div>');
     }
     if (img) {
       h.push('<div class="group"><h3>图片</h3><img class="thumb" alt="" src="' + esc(img.currentSrc || img.src) + '">' +
-        '<p class="note">' + esc(img.getAttribute('data-hx-src') || img.getAttribute('src') || '') + ' · ' + img.naturalWidth + '×' + img.naturalHeight + '</p>' +
-        '<div class="row"><button type="button" class="btn sm yellow" data-act="replace-img">替换图片</button></div>' +
+        '<p class="note">' + esc(img.getAttribute('data-hx-src') || img.getAttribute('src') || '') + ' · ' + img.naturalWidth + '×' + img.naturalHeight +
+        (img.hasAttribute('data-hx-src') ? ' <span class="badge">待发布</span>' : '') + '</p>' +
+        '<div class="row"><button type="button" class="btn sm yellow" data-act="replace-img">选择本地图片替换（可裁剪）</button></div>' +
+        '<p class="note">支持 PNG / JPG / GIF / WebP，发布时自动上传到仓库。</p>' +
         '<label class="field">替代文字（读屏和图片加载失败时显示）<input id="p-alt" value="' + esc(img.getAttribute('alt') || '') + '"></label>' +
         '<div class="row"><button type="button" class="btn sm" data-act="apply-alt">保存替代文字</button></div></div>');
     }
@@ -444,8 +470,16 @@
         '<label class="field">链接地址<input id="p-href" value="' + esc(href) + '" spellcheck="false" placeholder="https:// 或 #projects 或 files/xx.pdf"></label>' +
         '<div class="row"><button type="button" class="btn sm yellow" data-act="apply-link">保存链接</button>' +
         '<button type="button" class="btn sm" data-act="open-link">打开看看</button></div>' +
-        '<div class="row"><button type="button" class="btn sm" data-act="upload-file">' + (file ? '上传新文件替换' : '上传文件并链接到它') + '</button></div>' +
-        (file ? '<p class="note">替换后路径不变：' + esc(file) + (S.uploads[file] ? ' <span class="badge">待发布</span>' : '') + '</p>' : '') + '</div>');
+        '<div class="row"><button type="button" class="btn sm yellow" data-act="link-file">选择本地文件作为链接</button></div>' +
+        '<p class="note">会存到仓库 files/ 下的新路径，发布时自动上传，不影响其他链接。' +
+        (file && S.uploads[file] ? ' <span class="badge">待发布：' + esc(file) + '</span>' : '') + '</p>' +
+        (file ? '<div class="row"><button type="button" class="btn sm" data-act="replace-file">用新文件覆盖原文件</button></div>' +
+          '<p class="note">覆盖 ' + esc(file) + '，所有指向它的链接都会变成新文件。</p>' : '') + '</div>');
+    }
+    if (ct) {
+      h.push('<div class="group"><h3>颜色 · ' + esc(colorLabel(ct.el)) + '</h3>' + ct.rows.map(function (r) {
+        return '<p class="note">' + r[1] + '</p>' + swatches('ccolor', r[0], PALETTE, ct.el.style.getPropertyValue(r[0]));
+      }).join('') + '</div>');
     }
     if (b) {
       var sib = siblings(b), i = sib.indexOf(b);
@@ -460,25 +494,153 @@
     ui.panelBody.innerHTML = h.join('');
     ui.panel.hidden = false;
   }
+  // 一排色块 + 自定义取色 + 恢复默认；current 为元素上现有的行内值
+  function swatches(act, prop, list, current) {
+    var cur = normColor(current), custom = toHex(current);
+    return '<div class="swatches">' + list.map(function (c) {
+      return '<button type="button" class="sw" data-act="' + act + '" data-prop="' + prop + '" data-val="' + esc(c[1]) + '" style="background:' + c[2] +
+        '" title="' + c[0] + '" aria-label="' + c[0] + '" aria-pressed="' + String(!!cur && cur === normColor(c[1])) + '"></button>';
+    }).join('') +
+      '<label class="sw sw-custom" title="自定义颜色"><input type="color" data-act="' + act + '" data-prop="' + prop + '" value="' + custom + '" aria-label="自定义颜色"></label>' +
+      '<button type="button" class="btn sm" data-act="' + act + '" data-prop="' + prop + '" data-val="">默认</button></div>';
+  }
+  function normColor(v) {
+    if (!v || !String(v).trim()) return '';
+    var d = document.createElement('i');
+    d.style.setProperty('color', String(v).trim());
+    return d.style.getPropertyValue('color');
+  }
+  function toHex(v) {
+    v = String(v || '').trim();
+    if (/^#[0-9a-f]{6}$/i.test(v)) return v.toLowerCase();
+    var named = PALETTE.concat(TEXT_COLORS).filter(function (c) { return normColor(c[1]) === normColor(v); })[0];
+    if (named) return named[2].toLowerCase();
+    var m = /rgba?\((\d+),\s*(\d+),\s*(\d+)/.exec(normColor(v));
+    return m ? '#' + [m[1], m[2], m[3]].map(function (n) { return (+n < 16 ? '0' : '') + (+n).toString(16); }).join('') : '#888888';
+  }
 
-  /* ---------- 面板操作：链接、图片、文件、区块 ---------- */
+  /* ---------- 面板操作：链接、图片、文件、颜色、区块 ---------- */
   function onPanelClick(e) {
     var btn = e.target.closest('[data-act]');
-    if (!btn || btn.disabled) return;
-    var act = btn.getAttribute('data-act');
+    if (!btn || btn.disabled || btn.tagName === 'INPUT') return;
+    var act = btn.getAttribute('data-act'), val = btn.getAttribute('data-val');
     if (act === 'edit') { startEditing(S.sel); focusAll(S.sel, true); renderPanel(); }
     else if (act === 'apply-link') applyLink();
     else if (act === 'open-link') openLink();
-    else if (act === 'upload-file') uploadFile();
+    else if (act === 'link-file') linkLocalFile();
+    else if (act === 'replace-file') replaceRepoFile();
     else if (act === 'replace-img') replaceImage();
     else if (act === 'apply-alt') applyAlt();
+    else if (act === 'tsize') applyTextStyle('size', +val);
+    else if (act === 'tcolor') applyTextStyle('color', val);
+    else if (act === 'ccolor') applyCardColor(btn.getAttribute('data-prop'), val);
     else if (act === 'outer') select(parentBlock(S.block));
     else blockOp(act);
   }
+  function onPanelChange(e) {
+    var t = e.target;
+    if (t.type !== 'color') return;
+    if (t.getAttribute('data-act') === 'tcolor') applyTextStyle('color', t.value);
+    else applyCardColor(t.getAttribute('data-prop'), t.value);
+  }
+
+  /* ---------- 文字样式与卡片颜色 ---------- */
+  function textTarget() { return S.editing || (S.sel && isTextBlock(S.sel) ? S.sel : null); }
+  function colorLabel(el) {
+    if (el.tagName === 'SECTION') return '整个板块';
+    if (el.matches('.doc-head')) return '论文卡片顶栏';
+    if (el.matches('.stamp')) return '印章';
+    if (el.matches('.chip')) return '标签';
+    if (el.matches('.metric')) return '指标块';
+    return describe(el);
+  }
+  function colorTarget() {
+    for (var el = S.sel; el && S.doc && el !== S.doc.body; el = el.parentElement) {
+      if (el.closest(DUP_MARQUEE)) return null;
+      var cls = ' ' + (el.getAttribute('class') || '') + ' ', st = el.style;
+      if (/ c-[a-z] /.test(cls) || (st && st.getPropertyValue('--c'))) {
+        var rows = [['--c', '主色']];
+        if (/ t-[a-z] /.test(cls) || st.getPropertyValue('--c2')) rows.push(['--c2', '辅色']);
+        if (/ t3-[a-z] /.test(cls) || st.getPropertyValue('--c3')) rows.push(['--c3', '第三色']);
+        return { el: el, rows: rows };
+      }
+      if (el.matches(BG_SEL)) return { el: el, rows: [['background-color', '背景色']] };
+      if (el.tagName === 'SECTION' && el.id) return { el: el, rows: [['--accent', el.classList.contains('band') ? '整块背景色' : '标题高亮色']] };
+    }
+    return null;
+  }
+  function setInlineStyle(el, prop, val) {
+    if (val) el.style.setProperty(prop, val); else el.style.removeProperty(prop);
+    if (!el.getAttribute('style')) el.removeAttribute('style');
+  }
+  function applyCardColor(prop, val) {
+    var ct = colorTarget();
+    if (!ct || ct.el.style.getPropertyValue(prop).trim() === (val || '')) return;
+    finishEditing();
+    pushUndo();
+    setInlineStyle(ct.el, prop, val);
+    refreshDirty();
+    renderPanel();
+  }
+  function editingRange() {
+    if (!S.editing) return null;
+    var s = S.doc.getSelection();
+    if (!s || !s.rangeCount) return null;
+    var r = s.getRangeAt(0);
+    return !r.collapsed && S.editing.contains(r.commonAncestorContainer) ? r : null;
+  }
+  function applyTextStyle(kind, val) {
+    var r = editingRange();
+    if (r) { styleRange(r, kind, val); return; }
+    var el = textTarget();
+    if (!el) return;
+    finishEditing();
+    pushUndo();
+    if (kind === 'size') {
+      var cur = parseFloat(el.style.getPropertyValue('zoom')) || 1, i = 0;
+      ZOOMS.forEach(function (z, j) { if (Math.abs(z - cur) < Math.abs(ZOOMS[i] - cur)) i = j; });
+      var next = val === 0 ? 1 : ZOOMS[clamp(i + val, 0, ZOOMS.length - 1)];
+      setInlineStyle(el, 'zoom', next === 1 ? '' : String(next));
+    } else setInlineStyle(el, 'color', val);
+    refreshDirty();
+    renderPanel();
+  }
+  // 选中局部文字时包一层 span；em 相对所在段落，字号仍跟随原有响应式规则
+  function styleRange(r, kind, val) {
+    var prop = kind === 'size' ? 'font-size' : 'color';
+    if (kind === 'size' ? val === 0 : !val) {
+      S.editing.querySelectorAll('span[style]').forEach(function (n) {
+        if (!r.intersectsNode(n)) return;
+        n.style.removeProperty(prop);
+        if (!n.getAttribute('style')) unwrap(n); else S.editNodes.set(n, n.getAttribute('style'));
+      });
+    } else {
+      var span = S.doc.createElement('span');
+      span.setAttribute('data-hx-keep', '');
+      span.style.setProperty(prop, kind === 'size' ? (val > 0 ? '1.25em' : '0.8em') : val);
+      span.appendChild(r.extractContents());
+      Array.prototype.slice.call(span.querySelectorAll('*')).forEach(function (n) {
+        if (n.tagName === 'SPAN' && n.style.getPropertyValue(prop)) {
+          n.style.removeProperty(prop);
+          if (!n.getAttribute('style')) { unwrap(n); return; }
+        }
+        n.setAttribute('data-hx-keep', '');
+        S.editNodes.set(n, n.getAttribute('style'));  // 以当前样式为准，结束编辑时不要还原
+      });
+      r.insertNode(span);
+      var s = S.doc.getSelection(), nr = S.doc.createRange();
+      nr.selectNodeContents(span);
+      s.removeAllRanges(); s.addRange(nr);
+    }
+    setDirty(true);
+  }
+  function unwrap(n) { while (n.firstChild) n.parentNode.insertBefore(n.firstChild, n); n.remove(); }
+  function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
   function applyLink() {
     var a = currentLink(), hrefIn = $('#p-href'), textIn = $('#p-ltext');
     if (!a || !hrefIn) return;
     var href = hrefIn.value.trim(), text = textIn ? textIn.value.trim() : '';
+    if (isLocalPath(href)) { toast('这是你电脑上的路径，访问者打不开。请点「选择本地文件作为链接」，发布时会自动上传到仓库'); hrefIn.focus(); return; }
     if (!safeHref(href)) { toast('链接地址不合法：请用 https://、mailto:、tel:、#锚点 或站内路径'); hrefIn.focus(); return; }
     if (textIn && !text) { toast('按钮文字不能为空'); textIn.focus(); return; }
     if (href === (a.getAttribute('href') || '') && (!textIn || text === linkText(a))) return;
@@ -526,48 +688,173 @@
   function replaceImage() {
     var img = S.sel;
     if (!img || img.tagName !== 'IMG') return;
+    var w = img.naturalWidth || +img.getAttribute('width'), h = img.naturalHeight || +img.getAttribute('height');
     pickFile('image/*').then(function (f) {
       if (!f) return;
       if (!/^image\//.test(f.type)) { toast('请选择图片文件'); return; }
-      if (f.size > CFG.maxImage) { toast('图片超过 10 MB，请先压缩再上传'); return; }
-      var m = /\.([a-z0-9]{2,5})$/i.exec(f.name);
-      var ext = (m ? m[1] : f.type.split('/')[1] || 'png').toLowerCase().replace('jpeg', 'jpg');
-      var path = 'assets/uploads/' + stamp() + '.' + ext, url = URL.createObjectURL(f);
-      finishEditing();
-      pushUndo();
-      S.uploads[path] = f;
-      img.setAttribute('data-hx-src', path);
-      img.setAttribute('src', url);
-      var probe = new Image();
-      probe.onload = function () { img.setAttribute('width', probe.naturalWidth); img.setAttribute('height', probe.naturalHeight); renderPanel(); };
-      probe.src = url;
-      refreshDirty();
-      toast('图片已替换，发布后生效');
+      if (f.size > CFG.maxImage) { toast('图片超过 20 MB，请先压缩再上传'); return; }
+      return openCrop(f, w && h ? w / h : null).then(function (out) { if (out) applyImage(img, out); });
     });
   }
-  function uploadFile() {
+  function applyImage(img, f) {
+    var m = /\.([a-z0-9]{2,5})$/i.exec(f.name);
+    var ext = (m ? m[1] : f.type.split('/')[1] || 'png').toLowerCase().replace('jpeg', 'jpg');
+    var base = 'assets/uploads/' + stamp(), path = base + '.' + ext, n = 2;
+    while (S.uploads[path]) path = base + '-' + n++ + '.' + ext;
+    var url = URL.createObjectURL(f);
+    finishEditing();
+    pushUndo();
+    S.uploads[path] = f;
+    img.setAttribute('data-hx-src', path);
+    img.setAttribute('src', url);
+    var probe = new Image();
+    probe.onload = function () { img.setAttribute('width', probe.naturalWidth); img.setAttribute('height', probe.naturalHeight); renderPanel(); };
+    probe.src = url;
+    refreshDirty();
+    renderPanel();
+    toast('图片已替换，发布时会自动上传到 ' + path);
+  }
+  // 链接到一个本地文件：存到 files/ 下不冲突的新路径，发布时一起上传
+  function linkLocalFile() {
     var a = currentLink();
     if (!a) return;
-    var existing = repoPath(a.getAttribute('href') || '');
     pickFile('').then(function (f) {
       if (!f) return;
       if (f.size > CFG.maxFile) { toast('文件超过 50 MB，请改用 git 上传'); return; }
-      var path = existing;
-      if (existing) {
-        var oldExt = existing.split('.').pop().toLowerCase(), newExt = (f.name.split('.').pop() || '').toLowerCase();
-        if (oldExt !== newExt && !confirm('新文件是 .' + newExt + '，原文件是 .' + oldExt + '，仍然替换吗？')) return;
-      } else {
-        path = 'files/' + f.name.replace(/[\\/:*?"<>|#%\s]+/g, '-');
-        if (!confirm('会上传为 ' + path + '（同名文件会被覆盖），并把这个链接指向它。继续吗？')) return;
-      }
+      return freePath('files/', f.name).then(function (path) {
+        finishEditing();
+        pushUndo();
+        S.uploads[path] = f;
+        a.setAttribute('href', path);
+        refreshDirty();
+        renderPanel();
+        toast('链接已指向 ' + path + '，发布时会自动上传');
+      });
+    });
+  }
+  function replaceRepoFile() {
+    var a = currentLink(), path = a ? repoPath(a.getAttribute('href') || '') : '';
+    if (!path) return;
+    pickFile('').then(function (f) {
+      if (!f) return;
+      if (f.size > CFG.maxFile) { toast('文件超过 50 MB，请改用 git 上传'); return; }
+      var oldExt = path.split('.').pop().toLowerCase(), newExt = (f.name.split('.').pop() || '').toLowerCase();
+      if (!confirm('会用「' + f.name + '」覆盖 ' + path + '，所有指向它的链接都会变成新文件。' +
+        (oldExt !== newExt ? '\n注意：新文件是 .' + newExt + '，原文件是 .' + oldExt + '。' : '') + '\n继续吗？')) return;
       finishEditing();
       pushUndo();
+      f.hxReplace = true;  // 覆盖已有文件：即使页面里没有新引用也要上传
       S.uploads[path] = f;
-      if (!existing) a.setAttribute('href', path);
       refreshDirty();
       renderPanel();
-      toast((existing ? '已替换 ' : '已上传 ') + path + '，发布后生效');
+      toast('已替换 ' + path + '，发布后生效');
     });
+  }
+  // 找一个页面里没用过、这次也没上传过、仓库里也不存在的文件路径
+  function freePath(dir, name) {
+    var clean = name.replace(/[\\/:*?"<>|#%\s]+/g, '-').replace(/^-+|-+$/g, '') || 'file';
+    var m = /^(.*?)(\.[a-z0-9]{1,5})?$/i.exec(clean), stem = m[1] || 'file', ext = m[2] || '', html = serialize(), i = 1;
+    function candidate() { return dir + (i === 1 ? stem + ext : stem + '-' + i + ext); }
+    function taken(p) {
+      if (S.uploads[p] || html.indexOf('"' + p + '"') >= 0) return Promise.resolve(true);
+      if (!S.user) return Promise.resolve(false);
+      return gh('GET', '/repos/' + CFG.repo + '/contents/' + encPath(p) + '?ref=' + encodeURIComponent(S.branch))
+        .then(function () { return true; }, function () { return false; });
+    }
+    function next() {
+      var p = candidate();
+      return taken(p).then(function (t) { if (!t || i >= 50) return p; i++; return next(); });
+    }
+    return next();
+  }
+
+  /* ---------- 裁剪 ---------- */
+  var CROP_MAX = 2400;  // 输出最长边，避免上传过大的图片
+  var C = null;         // 当前裁剪会话
+  function openCrop(file, slotRatio) {
+    return new Promise(function (resolve) {
+      var gif = file.type === 'image/gif';
+      C = { file: file, url: URL.createObjectURL(file), slot: slotRatio, ratio: slotRatio || null, rect: null, drag: null, resolve: resolve };
+      cropUI.ratios.forEach(function (b) {
+        var r = b.getAttribute('data-ratio');
+        b.hidden = r === 'slot' && !slotRatio;
+        b.setAttribute('aria-pressed', String(r === (slotRatio ? 'slot' : 'free')));
+      });
+      cropUI.ok.textContent = gif ? '裁剪（会变成静态图）' : '裁剪并使用';
+      cropUI.skip.textContent = gif ? '不裁剪，保留动图' : '不裁剪，直接使用';
+      cropUI.img.onload = cropReset;
+      cropUI.img.src = C.url;
+      cropUI.el.hidden = false;
+      (gif ? cropUI.skip : cropUI.ok).focus();
+    });
+  }
+  function cropReset() {
+    if (!C) return;
+    var W = cropUI.img.naturalWidth, H = cropUI.img.naturalHeight, w = W, h = H;
+    if (C.ratio) { if (w / h > C.ratio) w = h * C.ratio; else h = w / C.ratio; }
+    C.rect = { x: (W - w) / 2, y: (H - h) / 2, w: w, h: h };
+    cropDraw();
+  }
+  function cropDraw() {
+    if (!C || !C.rect || !cropUI.img.naturalWidth) return;
+    var s = cropUI.img.clientWidth / cropUI.img.naturalWidth, r = C.rect, st = cropUI.box.style;
+    st.left = (cropUI.img.offsetLeft + r.x * s) + 'px';
+    st.top = (cropUI.img.offsetTop + r.y * s) + 'px';
+    st.width = (r.w * s) + 'px';
+    st.height = (r.h * s) + 'px';
+    var k = Math.min(1, CROP_MAX / Math.max(r.w, r.h));
+    cropUI.info.textContent = '输出 ' + Math.round(r.w * k) + ' × ' + Math.round(r.h * k) + ' 像素。拖动方框移动，拖四角调整大小。' +
+      (C.file.type === 'image/gif' ? 'GIF 裁剪后会变成静态图片，想保留动画请选「不裁剪」。' : '');
+  }
+  function cropPointerDown(e) {
+    if (!C || !C.rect) return;
+    e.preventDefault();
+    C.drag = { h: e.target.getAttribute('data-h') || 'move', x0: e.clientX, y0: e.clientY, r0: Object.assign({}, C.rect) };
+    try { cropUI.box.setPointerCapture(e.pointerId); } catch (err) { /* 没有真实指针时忽略 */ }
+  }
+  function cropPointerMove(e) {
+    var d = C && C.drag;
+    if (!d) return;
+    var W = cropUI.img.naturalWidth, H = cropUI.img.naturalHeight, s = cropUI.img.clientWidth / W, r0 = d.r0;
+    var dx = (e.clientX - d.x0) / s, dy = (e.clientY - d.y0) / s, min = Math.max(8, Math.min(W, H) * 0.04);
+    if (d.h === 'move') {
+      C.rect = { x: clamp(r0.x + dx, 0, W - r0.w), y: clamp(r0.y + dy, 0, H - r0.h), w: r0.w, h: r0.h };
+    } else {
+      // 拖动一个角，对角固定
+      var sx = d.h.indexOf('e') >= 0 ? 1 : -1, sy = d.h.indexOf('s') >= 0 ? 1 : -1;
+      var ax = sx > 0 ? r0.x : r0.x + r0.w, ay = sy > 0 ? r0.y : r0.y + r0.h;
+      var w = clamp(sx * ((sx > 0 ? r0.x + r0.w : r0.x) + dx - ax), min, sx > 0 ? W - ax : ax);
+      var h = clamp(sy * ((sy > 0 ? r0.y + r0.h : r0.y) + dy - ay), min, sy > 0 ? H - ay : ay);
+      if (C.ratio) { if (w / h > C.ratio) w = h * C.ratio; else h = w / C.ratio; }
+      C.rect = { x: sx > 0 ? ax : ax - w, y: sy > 0 ? ay : ay - h, w: w, h: h };
+    }
+    cropDraw();
+  }
+  function cropEnd(result) {
+    if (!C) return;
+    var c = C;
+    C = null;
+    cropUI.el.hidden = true;
+    if (result !== 'crop' || !c.rect) { URL.revokeObjectURL(c.url); c.resolve(result === 'skip' ? c.file : null); return; }
+    var r = c.rect, k = Math.min(1, CROP_MAX / Math.max(r.w, r.h)), cv = document.createElement('canvas');
+    cv.width = Math.max(1, Math.round(r.w * k));
+    cv.height = Math.max(1, Math.round(r.h * k));
+    var type = /png|gif/.test(c.file.type) ? 'image/png' : /webp/.test(c.file.type) ? 'image/webp' : 'image/jpeg', ctx = cv.getContext('2d');
+    if (type === 'image/jpeg') { ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, cv.width, cv.height); }
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(cropUI.img, r.x, r.y, r.w, r.h, 0, 0, cv.width, cv.height);
+    cv.toBlob(function (blob) {
+      URL.revokeObjectURL(c.url);
+      var name = c.file.name.replace(/\.[^.]+$/, '') + '.' + type.split('/')[1].replace('jpeg', 'jpg');
+      c.resolve(blob ? new File([blob], name, { type: type }) : c.file);
+    }, type, 0.92);
+  }
+  function cropRatio(b) {
+    if (!C) return;
+    var r = b.getAttribute('data-ratio');
+    C.ratio = r === 'slot' ? C.slot : r === 'free' ? null : +r;
+    cropUI.ratios.forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); });
+    cropReset();
   }
 
   function blockOp(act) {
@@ -618,7 +905,7 @@
   function collectFiles(html) {
     var files = [{ path: CFG.path, text: html, size: new Blob([html]).size }];
     Object.keys(S.uploads).forEach(function (p) {
-      if (p.indexOf('assets/uploads/') === 0 && html.indexOf(p) < 0) return;  // 撤销后不再引用的图片不上传
+      if (!S.uploads[p].hxReplace && html.indexOf(p) < 0) return;  // 撤销或改链接后不再引用的文件不上传
       files.push({ path: p, blob: S.uploads[p], size: S.uploads[p].size });
     });
     return files;
@@ -765,11 +1052,22 @@
     // 防止编辑器被别的网站嵌入后诱导点击
     if (window.top !== window.self && !LOCALHOST) { document.body.textContent = '出于安全考虑，编辑器不能被嵌入其他页面打开。'; return; }
     ui.panelBody.addEventListener('click', onPanelClick);
+    ui.panelBody.addEventListener('change', onPanelChange);
+    // 面板按钮不抢走 iframe 里的文字选区，这样才能只给选中的字改样式
+    ui.panelBody.addEventListener('mousedown', function (e) { if (e.target.closest('[data-act="tsize"],[data-act="tcolor"]')) e.preventDefault(); });
     ui.panelBody.addEventListener('keydown', function (e) {
       if (e.key !== 'Enter' || e.target.tagName !== 'INPUT') return;
       e.preventDefault();
       if (e.target.id === 'p-alt') applyAlt(); else applyLink();
     });
+    cropUI.box.addEventListener('pointerdown', cropPointerDown);
+    cropUI.box.addEventListener('pointermove', cropPointerMove);
+    ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(function (t) { cropUI.box.addEventListener(t, function () { if (C) C.drag = null; }); });
+    cropUI.ok.addEventListener('click', function () { cropEnd('crop'); });
+    cropUI.skip.addEventListener('click', function () { cropEnd('skip'); });
+    cropUI.cancel.addEventListener('click', function () { cropEnd('cancel'); });
+    Array.prototype.forEach.call(cropUI.ratios, function (b) { b.addEventListener('click', function () { cropRatio(b); }); });
+    window.addEventListener('resize', cropDraw);
     ui.panelClose.addEventListener('click', function () { finishEditing(); select(null); });
     ui.undo.addEventListener('click', undo);
     ui.reload.addEventListener('click', function () { load(false).catch(noop); });
@@ -788,7 +1086,8 @@
     document.addEventListener('keydown', function (e) {
       var k = (e.key || '').toLowerCase(), mod = e.metaKey || e.ctrlKey, inField = /^(INPUT|TEXTAREA)$/.test(document.activeElement.tagName);
       if (k === 'escape') {
-        if (!ui.pub.hidden) { if (!S.busy) ui.pub.hidden = true; }
+        if (!cropUI.el.hidden) cropEnd('cancel');
+        else if (!ui.pub.hidden) { if (!S.busy) ui.pub.hidden = true; }
         else if (!ui.login.hidden) ui.login.hidden = true;
         else { finishEditing(); select(null); }
       } else if (mod && k === 's') { e.preventDefault(); openPublish(); }
@@ -812,7 +1111,9 @@
     window.HXEditor = {
       state: S, serialize: serialize, select: select, startEditing: startEditing, finishEditing: finishEditing,
       blockOp: blockOp, undo: undo, collectFiles: collectFiles, openPublish: openPublish, confirmPublish: confirmPublish,
-      safeHref: safeHref, repoPath: repoPath, pickEditable: pickEditable, load: load, refreshDirty: refreshDirty
+      safeHref: safeHref, isLocalPath: isLocalPath, repoPath: repoPath, pickEditable: pickEditable, load: load, refreshDirty: refreshDirty,
+      applyTextStyle: applyTextStyle, applyCardColor: applyCardColor, colorTarget: colorTarget, freePath: freePath,
+      crop: function () { return C; }, cropEnd: cropEnd, cropDraw: cropDraw
     };
   }
   init();

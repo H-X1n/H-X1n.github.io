@@ -26,7 +26,7 @@
 
 <main class="stage" id="stage">
 <div class="frame-wrap"><iframe id="site" title="网站预览：点击文字即可编辑"></iframe></div>
-<p class="hint">点击文字直接修改 · Enter 完成 · Shift+Enter 换行 · Esc 退出 · 点图片可替换 · 点卡片空白处可复制 / 删除整块</p>
+<p class="hint">点击文字直接修改 · 面板里可调字号、文字颜色和卡片颜色 · 点图片可替换并裁剪 · 链接可选本地文件，发布时自动上传</p>
 </main>
 
 <aside class="panel" id="panel" aria-label="属性面板" hidden>
@@ -69,6 +69,28 @@
 <div class="card-foot">
 <button type="button" class="btn" id="pub-cancel">取消</button>
 <button type="button" class="btn primary" id="pub-ok">确认发布</button>
+</div>
+</div>
+</div>
+
+<div class="modal" id="crop" role="dialog" aria-modal="true" aria-labelledby="crop-title" hidden>
+<div class="card card-wide">
+<div class="card-head"><h2 id="crop-title">裁剪图片</h2></div>
+<div class="card-body">
+<div class="row ratio-row" role="group" aria-label="裁剪比例">
+<button type="button" class="btn sm" data-ratio="slot">和原图比例一致</button>
+<button type="button" class="btn sm" data-ratio="free">自由</button>
+<button type="button" class="btn sm" data-ratio="1.7777778">16:9</button>
+<button type="button" class="btn sm" data-ratio="1.3333333">4:3</button>
+<button type="button" class="btn sm" data-ratio="1">1:1</button>
+</div>
+<div class="crop-stage"><img id="crop-img" alt="待裁剪的图片"><div class="crop-box" id="crop-box"><i data-h="nw"></i><i data-h="ne"></i><i data-h="sw"></i><i data-h="se"></i></div></div>
+<p class="note" id="crop-info" role="status"></p>
+</div>
+<div class="card-foot">
+<button type="button" class="btn" id="crop-cancel">取消</button>
+<button type="button" class="btn" id="crop-skip">不裁剪，直接使用</button>
+<button type="button" class="btn primary" id="crop-ok">裁剪并使用</button>
 </div>
 </div>
 </div>

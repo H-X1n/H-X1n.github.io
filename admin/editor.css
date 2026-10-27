@@ -59,6 +59,26 @@ body.busy{cursor:progress}
 .note{margin:0;font-size:12px;color:#4a4a4a}
 .badge{display:inline-block;padding:0 8px;background:var(--g);border:var(--line);font-size:12px;font-weight:700}
 
+/* 色块 */
+.swatches{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.sw{position:relative;width:28px;height:28px;padding:0;border:var(--line);box-shadow:2px 2px 0 var(--ink);cursor:pointer}
+.sw[aria-pressed="true"]{outline:3px solid var(--b);outline-offset:2px}
+.sw-custom{overflow:hidden;background:conic-gradient(#E5484D,#FFD23F,#4ADE80,#22D3EE,#5B8CFF,#FF7AB6,#E5484D)}
+.sw-custom input{position:absolute;inset:-4px;width:calc(100% + 8px);height:calc(100% + 8px);padding:0;border:0;opacity:0;cursor:pointer}
+.size-row{align-items:center}
+
+/* 裁剪 */
+.card-wide{width:min(900px,100%)}
+.ratio-row .btn[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.crop-stage{position:relative;display:flex;align-items:center;justify-content:center;min-height:200px;background:#2b2b2b repeating-conic-gradient(#3a3a3a 0 25%,#2b2b2b 0 50%) 0 0/20px 20px;border:var(--line);overflow:hidden;user-select:none;-webkit-user-select:none}
+.crop-stage img{display:block;max-width:100%;max-height:58dvh;pointer-events:none}
+.crop-box{position:absolute;border:2px solid #fff;outline:2px solid var(--ink);box-shadow:0 0 0 9999px rgba(10,10,10,.55);cursor:move;touch-action:none}
+.crop-box i{position:absolute;width:18px;height:18px;background:var(--y);border:2px solid var(--ink);touch-action:none}
+.crop-box i[data-h="nw"]{left:-10px;top:-10px;cursor:nwse-resize}
+.crop-box i[data-h="ne"]{right:-10px;top:-10px;cursor:nesw-resize}
+.crop-box i[data-h="sw"]{left:-10px;bottom:-10px;cursor:nesw-resize}
+.crop-box i[data-h="se"]{right:-10px;bottom:-10px;cursor:nwse-resize}
+
 /* 弹窗 */
 .modal{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:16px;background:rgba(10,10,10,.5)}
 .card{width:min(580px,100%);max-height:calc(100dvh - 32px);overflow:auto;background:var(--bg);border:3px solid var(--ink);box-shadow:8px 8px 0 var(--ink)}
