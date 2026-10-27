@@ -35,6 +35,9 @@
     ['粉', '#D6337A', '#D6337A'], ['橙', '#E5641A', '#E5641A'], ['绿', '#15803D', '#15803D'], ['灰', '#6B6B6B', '#6B6B6B']];
   // 整段字号用 zoom 等比放大，不会破坏原有的响应式字号；选中局部文字时用相对父级的 em
   var ZOOMS = [0.7, 0.8, 0.9, 1, 1.15, 1.3, 1.5, 1.75, 2];
+  // 文字高亮沿用站点标题里「经历」那种 .hl 荧光笔底色，颜色写在 --hl 上
+  var HL_COLORS = [['黄', 'var(--yellow)', '#FFD23F'], ['粉', 'var(--pink)', '#FF7AB6'], ['蓝', 'var(--blue)', '#5B8CFF'],
+    ['绿', 'var(--green)', '#4ADE80'], ['橙', 'var(--orange)', '#FF8A3D'], ['白', 'var(--paper)', '#FFFFFF']];
   var BOOL_ATTRS = /\s(open|download|hidden|defer|async|disabled|checked|selected|required|multiple|readonly|autofocus|novalidate|reversed|controls|loop|muted|playsinline)=""/g;
   var SVG_EMPTY = /<(path|use|circle|rect|line|polyline|polygon|ellipse|stop)(\s[^<>]*)?><\/\1>/g;
   var NAMES = {
@@ -331,9 +334,9 @@
   function onPointerDown(e) {
     var t = e.target;
     if (S.editing && S.editing.contains(t)) {
-      var before = currentLink();
+      var before = currentLink(), hlBefore = hlAt();
       S.target = t.nodeType === 3 ? t.parentElement : t;
-      if (currentLink() !== before) renderPanel();
+      if (currentLink() !== before || hlAt() !== hlBefore) renderPanel();  // 点到另一个链接 / 高亮时刷新面板
       return;
     }
     if (t.closest && t.closest(DUP_MARQUEE)) { e.preventDefault(); toast('这一组是自动生成的副本，请修改它前面那一组'); return; }
@@ -452,7 +455,9 @@
         '<button type="button" class="btn sm" data-act="tsize" data-val="1" aria-label="放大字号">A＋</button>' +
         '<button type="button" class="btn sm" data-act="tsize" data-val="0">默认</button><span class="note">整段 ×' + z + '</span></div>' +
         '<p class="note">文字颜色</p>' + swatches('tcolor', 'color', TEXT_COLORS, tt.style.getPropertyValue('color')) +
-        '<p class="note">先在文字里拖选一部分再点，只改选中的字；不选则改整段。</p></div>');
+        '<p class="note">文字高亮（荧光笔底色）</p>' +
+        swatches('thl', '--hl', HL_COLORS, hlAt() ? hlAt().style.getPropertyValue('--hl') : '', '去掉高亮') +
+        '<p class="note">先在文字里拖选一部分再点，只改选中的字；不选则改整段。点在已有高亮上（如标题里的「经历」）可直接换色或去掉。</p></div>');
     }
     if (img) {
       h.push('<div class="group"><h3>图片</h3><img class="thumb" alt="" src="' + esc(img.currentSrc || img.src) + '">' +
@@ -495,14 +500,14 @@
     ui.panel.hidden = false;
   }
   // 一排色块 + 自定义取色 + 恢复默认；current 为元素上现有的行内值
-  function swatches(act, prop, list, current) {
+  function swatches(act, prop, list, current, resetLabel) {
     var cur = normColor(current), custom = toHex(current);
     return '<div class="swatches">' + list.map(function (c) {
       return '<button type="button" class="sw" data-act="' + act + '" data-prop="' + prop + '" data-val="' + esc(c[1]) + '" style="background:' + c[2] +
         '" title="' + c[0] + '" aria-label="' + c[0] + '" aria-pressed="' + String(!!cur && cur === normColor(c[1])) + '"></button>';
     }).join('') +
       '<label class="sw sw-custom" title="自定义颜色"><input type="color" data-act="' + act + '" data-prop="' + prop + '" value="' + custom + '" aria-label="自定义颜色"></label>' +
-      '<button type="button" class="btn sm" data-act="' + act + '" data-prop="' + prop + '" data-val="">默认</button></div>';
+      '<button type="button" class="btn sm" data-act="' + act + '" data-prop="' + prop + '" data-val="">' + (resetLabel || '默认') + '</button></div>';
   }
   function normColor(v) {
     if (!v || !String(v).trim()) return '';
@@ -533,6 +538,7 @@
     else if (act === 'apply-alt') applyAlt();
     else if (act === 'tsize') applyTextStyle('size', +val);
     else if (act === 'tcolor') applyTextStyle('color', val);
+    else if (act === 'thl') applyHighlight(val);
     else if (act === 'ccolor') applyCardColor(btn.getAttribute('data-prop'), val);
     else if (act === 'outer') select(parentBlock(S.block));
     else blockOp(act);
@@ -541,6 +547,7 @@
     var t = e.target;
     if (t.type !== 'color') return;
     if (t.getAttribute('data-act') === 'tcolor') applyTextStyle('color', t.value);
+    else if (t.getAttribute('data-act') === 'thl') applyHighlight(t.value);
     else applyCardColor(t.getAttribute('data-prop'), t.value);
   }
 
@@ -588,6 +595,70 @@
     if (!s || !s.rangeCount) return null;
     var r = s.getRangeAt(0);
     return !r.collapsed && S.editing.contains(r.commonAncestorContainer) ? r : null;
+  }
+  // 光标或点击位置所在的已有高亮（例如标题里的「经历」）
+  function hlAt() {
+    var tt = textTarget(), node = null;
+    if (!tt) return null;
+    if (S.editing) {
+      var s = S.doc.getSelection();
+      if (s && s.rangeCount && S.editing.contains(s.anchorNode)) node = s.anchorNode;
+    }
+    node = node || S.target;
+    var el = node && (node.nodeType === 3 ? node.parentElement : node), hl = el && el.closest ? el.closest('.hl') : null;
+    return hl && tt.contains(hl) ? hl : null;
+  }
+  function applyHighlight(val) {
+    var r = editingRange();
+    if (r) { highlightRange(r, val); return; }
+    var el = textTarget();
+    if (!el) return;
+    var cur = hlAt(), spans = cur ? [cur] : Array.prototype.slice.call(el.querySelectorAll('.hl'));
+    if (!val && !spans.length) { toast('这段文字没有高亮'); return; }
+    var editing = S.editing === el;
+    if (!editing) { finishEditing(); pushUndo(); }
+    if (spans.length) {
+      spans.forEach(function (n) {
+        if (!val) { unwrap(n); return; }
+        n.style.setProperty('--hl', val);
+        if (editing) S.editNodes.set(n, n.getAttribute('style'));
+      });
+    } else {
+      // 没有选中文字也没有现成高亮：给整段加一层
+      var span = makeHl(val);
+      while (el.firstChild) span.appendChild(el.firstChild);
+      el.appendChild(span);
+    }
+    if (editing) setDirty(true); else refreshDirty();
+    renderPanel();
+  }
+  function highlightRange(r, val) {
+    if (!val) {
+      var anc = r.commonAncestorContainer, inside = (anc.nodeType === 3 ? anc.parentElement : anc).closest('.hl');
+      Array.prototype.slice.call(S.editing.querySelectorAll('.hl')).forEach(function (n) { if (r.intersectsNode(n)) unwrap(n); });
+      if (inside && S.editing.contains(inside) && inside.isConnected) unwrap(inside);
+    } else {
+      var span = makeHl(val);
+      span.appendChild(r.extractContents());
+      Array.prototype.slice.call(span.querySelectorAll('*')).forEach(function (n) {
+        if (n.classList.contains('hl')) { unwrap(n); return; }  // 不嵌套高亮
+        n.setAttribute('data-hx-keep', '');
+        S.editNodes.set(n, n.getAttribute('style'));
+      });
+      r.insertNode(span);
+      var s = S.doc.getSelection(), nr = S.doc.createRange();
+      nr.selectNodeContents(span);
+      s.removeAllRanges(); s.addRange(nr);
+    }
+    setDirty(true);
+    renderPanel();
+  }
+  function makeHl(val) {
+    var span = S.doc.createElement('span');
+    span.className = 'hl';
+    span.setAttribute('data-hx-keep', '');
+    span.style.setProperty('--hl', val);
+    return span;
   }
   function applyTextStyle(kind, val) {
     var r = editingRange();
@@ -1054,7 +1125,7 @@
     ui.panelBody.addEventListener('click', onPanelClick);
     ui.panelBody.addEventListener('change', onPanelChange);
     // 面板按钮不抢走 iframe 里的文字选区，这样才能只给选中的字改样式
-    ui.panelBody.addEventListener('mousedown', function (e) { if (e.target.closest('[data-act="tsize"],[data-act="tcolor"]')) e.preventDefault(); });
+    ui.panelBody.addEventListener('mousedown', function (e) { if (e.target.closest('[data-act="tsize"],[data-act="tcolor"],[data-act="thl"]')) e.preventDefault(); });
     ui.panelBody.addEventListener('keydown', function (e) {
       if (e.key !== 'Enter' || e.target.tagName !== 'INPUT') return;
       e.preventDefault();
@@ -1112,7 +1183,7 @@
       state: S, serialize: serialize, select: select, startEditing: startEditing, finishEditing: finishEditing,
       blockOp: blockOp, undo: undo, collectFiles: collectFiles, openPublish: openPublish, confirmPublish: confirmPublish,
       safeHref: safeHref, isLocalPath: isLocalPath, repoPath: repoPath, pickEditable: pickEditable, load: load, refreshDirty: refreshDirty,
-      applyTextStyle: applyTextStyle, applyCardColor: applyCardColor, colorTarget: colorTarget, freePath: freePath,
+      applyTextStyle: applyTextStyle, applyHighlight: applyHighlight, hlAt: hlAt, applyCardColor: applyCardColor, colorTarget: colorTarget, freePath: freePath,
       crop: function () { return C; }, cropEnd: cropEnd, cropDraw: cropDraw
     };
   }
