@@ -279,6 +279,11 @@
       var w = S.doc.createTreeWalker(el, 4), t;
       while ((t = w.nextNode())) if (t.data.indexOf('\u00a0') >= 0) t.data = t.data.replace(/\u00a0/g, ' ');
     }
+    // 去掉没有文字的高亮；外层高亮只包着另一层高亮时只留里层（看到的就是里层的颜色）
+    Array.prototype.slice.call(el.querySelectorAll('span.hl')).reverse().forEach(function (n) {
+      if (!n.textContent.trim()) unwrap(n);
+      else if (n.childNodes.length === 1 && n.firstChild.nodeType === 1 && n.firstChild.matches('span.hl')) unwrap(n);
+    });
     while (el.lastChild && el.lastChild.nodeName === 'BR') el.lastChild.remove();
     if (!el.textContent.trim()) el.innerHTML = '';
   }
@@ -633,10 +638,19 @@
     renderPanel();
   }
   function highlightRange(r, val) {
+    var anc = r.commonAncestorContainer, inside = (anc.nodeType === 3 ? anc.parentElement : anc).closest('.hl');
+    if (inside && !S.editing.contains(inside)) inside = null;
     if (!val) {
-      var anc = r.commonAncestorContainer, inside = (anc.nodeType === 3 ? anc.parentElement : anc).closest('.hl');
       Array.prototype.slice.call(S.editing.querySelectorAll('.hl')).forEach(function (n) { if (r.intersectsNode(n)) unwrap(n); });
-      if (inside && S.editing.contains(inside) && inside.isConnected) unwrap(inside);
+      if (inside && inside.isConnected) unwrap(inside);
+    } else if (!r.toString().trim()) {
+      toast('请先选中文字');
+      return;
+    } else if (inside) {
+      // 选区落在已有高亮里：直接给它换色，不再套一层
+      inside.style.setProperty('--hl', val);
+      S.editNodes.set(inside, inside.getAttribute('style'));
+      if (inside.textContent.trim() !== r.toString().trim()) toast('已有高亮只能整体换色，已改整段高亮的颜色');
     } else {
       var span = makeHl(val);
       span.appendChild(r.extractContents());
@@ -646,12 +660,26 @@
         S.editNodes.set(n, n.getAttribute('style'));
       });
       r.insertNode(span);
+      moveEdgeBreaks(span);
       var s = S.doc.getSelection(), nr = S.doc.createRange();
       nr.selectNodeContents(span);
       s.removeAllRanges(); s.addRange(nr);
     }
     setDirty(true);
     renderPanel();
+  }
+  // 选区首尾的换行不要包进样式 span（否则会留下一个看不见内容、只剩色块的 span）
+  function moveEdgeBreaks(span) {
+    while (span.lastChild && span.lastChild.nodeName === 'BR') span.parentNode.insertBefore(span.lastChild, span.nextSibling);
+    while (span.firstChild && span.firstChild.nodeName === 'BR') span.parentNode.insertBefore(span.firstChild, span);
+  }
+  // 选区正好是某个已有样式 span 的全部文字时返回它，用来原地修改而不是再套一层
+  function coveringSpan(r, test) {
+    var n = r.commonAncestorContainer, want = r.toString().trim();
+    for (var el = n.nodeType === 3 ? n.parentElement : n; el && el !== S.editing; el = el.parentElement) {
+      if (test(el) && el.textContent.trim() === want) return el;
+    }
+    return null;
   }
   function makeHl(val) {
     var span = S.doc.createElement('span');
@@ -685,7 +713,19 @@
         n.style.removeProperty(prop);
         if (!n.getAttribute('style')) unwrap(n); else S.editNodes.set(n, n.getAttribute('style'));
       });
+    } else if (!r.toString().trim()) {
+      toast('请先选中文字');
+      return;
     } else {
+      var hit = coveringSpan(r, function (el) { return el.tagName === 'SPAN' && !!el.style.getPropertyValue(prop); });
+      if (hit) {
+        // 已经单独设过样式的文字：原地修改；字号在原值上继续放大或缩小
+        var size = Math.round((parseFloat(hit.style.getPropertyValue('font-size')) || 1) * (val > 0 ? 1.25 : 0.8) * 100) / 100;
+        hit.style.setProperty(prop, kind === 'size' ? size + 'em' : val);
+        S.editNodes.set(hit, hit.getAttribute('style'));
+        setDirty(true);
+        return;
+      }
       var span = S.doc.createElement('span');
       span.setAttribute('data-hx-keep', '');
       span.style.setProperty(prop, kind === 'size' ? (val > 0 ? '1.25em' : '0.8em') : val);
@@ -699,6 +739,7 @@
         S.editNodes.set(n, n.getAttribute('style'));  // 以当前样式为准，结束编辑时不要还原
       });
       r.insertNode(span);
+      moveEdgeBreaks(span);
       var s = S.doc.getSelection(), nr = S.doc.createRange();
       nr.selectNodeContents(span);
       s.removeAllRanges(); s.addRange(nr);
