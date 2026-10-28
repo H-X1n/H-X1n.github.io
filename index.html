@@ -281,6 +281,7 @@ h1,h2,h3,h4{text-wrap:balance}
 .proj.rev .proj-media{order:2;border-right:0;border-left:var(--line)}
 .proj-more{grid-column:1/-1;order:3}
 .facts{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.facts.f2{grid-template-columns:1fr 1fr}
 }
 @media (max-width:640px){.proj-flag{--s:92px;--fs:16px;top:-30px;left:-10px}}
 /* ---------- competitions ---------- */
@@ -535,7 +536,7 @@ h1,h2,h3,h4{text-wrap:balance}
 <header class="sec-head">
 <p class="sec-label"><span>03</span><span>Internship</span></p>
 <h2 id="internship-title" class="sec-title">实习<span class="hl">经历</span></h2>
-<p class="sec-lead">在百度电商部门参与智能投放项目：视频优选模型、多模态表征。<br>在咪咕足球直播业务中落地多模态 AI：流式视频问答、AI 解说、球员检测与比赛 UI 识别。</p>
+<p class="sec-lead">在百度电商部门参与智能投放项目：视频优选模型、多模态表征。<br>在咪咕足球直播业务中落地多模态 AI：流式视频 Caption、AI 解说、球员检测与比赛 UI 识别。</p>
 </header>
 <article class="intern">
 <div class="intern-head">
@@ -605,12 +606,12 @@ h1,h2,h3,h4{text-wrap:balance}
 </div>
 <div class="acc">
 <details class="acc-item" open>
-<summary><span class="acc-no">01</span><span class="acc-title"><span class="acc-tag">核心项目</span>OnlineSoccer：足球直播流式视频问答模型</span><span class="acc-ico" aria-hidden="true"></span></summary>
+<summary><span class="acc-no">01</span><span class="acc-title"><span class="acc-tag">核心项目</span>OnlineSoccer：流式足球视频 Caption 模型</span><span class="acc-ico" aria-hidden="true"></span></summary>
 <div class="acc-body">
 <div class="acc-main">
-<p>面向“边看直播边提问”的业务需求，设计并实现流式因果视频语言模型系统：用户可用自然语言对正在直播的比赛实时提问（如“刚才那个进球是第几分钟？”“上半场一共几次角球？”），模型仅依据已播出画面作答。</p>
+<p>面向“边看直播边提问”的业务需求，设计并实现流式视频 caption 系统：直播进行到任意时刻，用户都可以问某一时刻发生了什么（如在第 30 分钟问“第 10 分钟发生了什么？”），模型依据已播出的画面，生成那一刻的解说描述。</p>
 <ul class="pts">
-<li><strong>模型</strong>：基于 Qwen2.5-VL-7B 自研 Mamba-3 + SwiGLU 时序投影器，实现约 <strong>32× 视觉 token 压缩</strong></li>
+<li><strong>模型</strong>：基于 Qwen2.5-VL-7B 自研 Mamba-3 + SwiGLU 时序投影器，实现约 <strong>32× 视觉 token 压缩</strong>，直播画面边播边压缩，在上下文中持续累积</li>
 <li><strong>数据</strong>：构建覆盖 <strong>422 场</strong>完整比赛的流式足球 QA 数据集（12 万+ QA 模板 / 3.2 万+ 固定 QA）</li>
 <li><strong>训练</strong>：四阶段课程训练，冻结视觉编码器、仅训练投影器与 LLM LoRA，完成 <strong>8×A100</strong> FSDP分布式训练</li>
 </ul>
@@ -675,14 +676,14 @@ h1,h2,h3,h4{text-wrap:balance}
 <div class="proj-media">
 <span class="sticker proj-flag c-p" aria-hidden="true"><svg><use href="#burst"/></svg><b>实习<small>CORE</small></b></span>
 <figure class="browser mw-720">
-<div class="browser-bar" aria-hidden="true"><i></i><i></i><i></i><span class="browser-url">onlinesoccer · live QA demo</span></div>
-<img src="assets/project-1-demo.gif" alt="OnlineSoccer 足球直播问答演示：左侧为足球直播画面，右侧为视频助手对话面板，可针对直播比赛提问" width="720" height="450" loading="lazy" decoding="async">
+<div class="browser-bar" aria-hidden="true"><i></i><i></i><i></i><span class="browser-url">onlinesoccer · live caption demo</span></div>
+<img src="assets/onlinesoccer-demo.gif" alt="OnlineSoccer 演示（示意输出）：直播进行到 58 分 13 秒时，用户用英文提问第 10 分钟发生了什么；时间轴显示开赛以来压缩后的视觉 token 在上下文中不断累积，模型回看第 10 分钟并给出那一刻的英文解说" width="720" height="450" loading="lazy" decoding="async">
 </figure>
 </div>
 <div class="proj-body">
 <div class="proj-kick"><span class="proj-no">PROJECT 01</span><span class="chip fill c-p">实习项目</span></div>
-<h3>OnlineSoccer：足球直播<wbr>流式视频问答模型</h3>
-<p class="proj-desc">直播问答要求模型只依据已播出的画面作答，而一场完整比赛长达 90 分钟以上，视觉 token 会随时间持续累积。OnlineSoccer用自研时序投影器将视觉 token 压缩约 32 倍，并在 422 场完整比赛数据上训练，可回答进球时间、角球次数等需要长程记忆的问题。</p>
+<h3>OnlineSoccer：<wbr>流式足球视频 Caption 模型</h3>
+<p class="proj-desc">直播进行到任意时刻都能回看提问：比如在第 30 分钟问「第 10 分钟发生了什么？」，模型依据已播出的画面，生成那一刻的解说描述（caption）。一场比赛超过 90 分钟，画面要一直累积在 VLM 的上下文里；项目把论文 OnlineSoccer 的因果时空压缩策略用到直播流上，画面边播边压缩，视觉 token 约少 32 倍。</p>
 <ul class="metrics" aria-label="关键指标">
 <li class="metric"><b>32×</b><span>token 压缩</span></li>
 <li class="metric"><b>422</b><span>完整比赛</span></li>
@@ -691,12 +692,14 @@ h1,h2,h3,h4{text-wrap:balance}
 </ul>
 </div>
 <div class="proj-more">
-<dl class="facts">
-<div><dt>核心创新</dt><dd>以 Qwen2.5-VL-7B 为基座，用自研  Temporal Mamba Proj插入模型，在视觉 token 进入 LLM 前显式建模跨帧时序关系；结合 Spatial Pool 4×4 与 Temporal Sampling，实现约 <span class="hl" style="--hl: var(--yellow);">32×</span> token 压缩，降低流式推理的显存与延迟开销。</dd></div>
-<div><dt>数据构建</dt><dd>覆盖 422 场完整比赛、12 万+ QA 模板与 3.2 万+ 固定 QA，按 short / mid / long 三级记忆延迟分层，覆盖进球时间、角球次数、阶段性总结等时序推理任务。</dd></div>
+<dl class="facts f2">
+<div><dt>流式推理</dt><dd>直播画面按时间顺序逐段压缩，追加进 VLM 上下文并持续累积，直到用户提问；模型依据累积的上下文，生成被问时刻的 caption。投影器是因果的，已输出的视觉 token 只依赖已经播出的画面。</dd></div>
+<div><dt>压缩策略（论文）</dt><dd>以 Qwen2.5-VL-7B 为基座，插入论文提出的 Temporal Mamba Proj：先降宽并做 2×2 空间池化，再用 4 层因果 Mamba-3 + SwiGLU 沿时间扫描，最后通道打包、按 stride 选取输出。每 32 帧画面从 1,792 个视觉 token 压到 56 个（<span class="hl" style="--hl: var(--yellow);">32×</span>），调整 stride 不用重新训练。论文实验中，56 个 token 的 CIDEr 为 37.54，高于原生 1,792 个 token 的 34.62。</dd></div>
+<div><dt>数据构建</dt><dd>覆盖 422 场完整比赛、12 万+ QA 模板与 3.2 万+ 固定 QA：问题指向比赛中已经播出的某一时刻，答案是那一刻的解说描述；按被问时刻距提问时刻的远近，分为 short / mid / long 三级记忆延迟。</dd></div>
 <div><dt>训练策略</dt><dd>四阶段课程训练（视觉语言对齐 → 通用多模态 SFT → 足球领域适配 → 全场流式 QA），冻结视觉编码器、仅训练投影器与 LLM LoRA，8×A100 分布式训练。</dd></div>
 </dl>
-<div class="proj-foot"><ul class="chips"><li class="chip">Qwen2.5-VL-7B</li><li class="chip">Mamba</li><li class="chip">LoRA</li><li class="chip">PyTorch</li><li class="chip">FSDP</li><li class="chip">SFT</li><li class="chip">GRPO</li></ul></div>
+<div class="proj-foot"><ul class="chips"><li class="chip">Qwen2.5-VL-7B</li><li class="chip">Mamba</li><li class="chip">LoRA</li><li class="chip">PyTorch</li><li class="chip">FSDP</li><li class="chip">SFT</li></ul>
+<a class="btn btn-sm c-y" href="files/OnlineSoccer-CSCWD2027.pdf" target="_blank" rel="noopener noreferrer"><svg class="i" aria-hidden="true"><use href="#i-file"/></svg>查看论文<span class="sr">（在新标签页打开）</span></a></div>
 </div>
 </article>
 <article class="proj rev c-b t-p">
