@@ -272,6 +272,7 @@ h1,h2,h3,h4{text-wrap:balance}
 .facts div{display:grid;gap:6px;justify-items:start;align-content:start}
 .facts dt{padding:1px 10px;background:var(--ink);color:var(--bg);font-size:13px;font-weight:700;letter-spacing:.08em;line-height:1.6}
 .facts dd{color:var(--ink2);font-size:16px}
+.facts code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.88em;overflow-wrap:anywhere}
 .proj-more{display:grid;gap:22px;padding:clamp(20px,3vw,34px) clamp(22px,3.2vw,44px);background:var(--bg);border-top:var(--line)}
 .proj-foot{display:flex;flex-wrap:wrap;align-items:center;gap:14px 18px;padding-top:20px;border-top:3px dashed var(--ink)}
 .proj-foot .chips{flex:1 1 300px}
@@ -492,10 +493,10 @@ h1,h2,h3,h4{text-wrap:balance}
 <div class="marquee-vp">
 <div class="marquee-track">
 <ul class="marquee-list">
-<li>PyTorch</li><li>FSDP</li><li>DeepSpeed</li><li>SGLang</li><li>vLLM</li><li>Mamba</li><li>RAG</li><li>LoRA / QLoRA</li><li>DPO</li><li>PPO</li><li>Transformers</li><li>BGE-M3</li><li>YOLO</li><li>InsightFace</li><li>PaddleOCR</li><li>OpenCV</li><li>ReAct Agent</li><li>MCP</li>
+<li>PyTorch</li><li>FSDP</li><li>DeepSpeed</li><li>SGLang</li><li>vLLM</li><li>Mamba</li><li>RAG</li><li>LoRA / QLoRA</li><li>DPO</li><li>PPO</li><li>GRPO</li><li>veRL</li><li>Transformers</li><li>BGE-M3</li><li>YOLO</li><li>InsightFace</li><li>PaddleOCR</li><li>OpenCV</li><li>ReAct Agent</li><li>MCP</li>
 </ul>
 <ul class="marquee-list" aria-hidden="true">
-<li>PyTorch</li><li>FSDP</li><li>DeepSpeed</li><li>SGLang</li><li>vLLM</li><li>Mamba</li><li>RAG</li><li>LoRA / QLoRA</li><li>DPO</li><li>PPO</li><li>Transformers</li><li>BGE-M3</li><li>YOLO</li><li>InsightFace</li><li>PaddleOCR</li><li>OpenCV</li><li>ReAct Agent</li><li>MCP</li>
+<li>PyTorch</li><li>FSDP</li><li>DeepSpeed</li><li>SGLang</li><li>vLLM</li><li>Mamba</li><li>RAG</li><li>LoRA / QLoRA</li><li>DPO</li><li>PPO</li><li>GRPO</li><li>veRL</li><li>Transformers</li><li>BGE-M3</li><li>YOLO</li><li>InsightFace</li><li>PaddleOCR</li><li>OpenCV</li><li>ReAct Agent</li><li>MCP</li>
 </ul>
 </div>
 </div>
@@ -538,7 +539,7 @@ h1,h2,h3,h4{text-wrap:balance}
 <div class="skill-top"><span class="skill-ico"><svg aria-hidden="true"><use href="#s-eng"/></svg></span><span class="skill-no">05</span></div>
 <h3>工程 &amp; 数据</h3>
 <p class="skill-en">Engineering &amp; Data</p>
-<ul class="chips"><li class="chip">Python</li><li class="chip">MapReduce</li><li class="chip">Spark</li><li class="chip">Ray</li><li class="chip">分布式训练（FSDP / DeepSpeed）</li><li class="chip">SGLang</li><li class="chip">vLLM</li><li class="chip">Hugging Face 部署</li><li class="chip">大规模数据集构建</li><li class="chip">多模态数据清洗</li><li class="chip">Git</li><li class="chip">Linux</li><li class="chip">Hadoop</li></ul>
+<ul class="chips"><li class="chip">Python</li><li class="chip">MapReduce</li><li class="chip">Spark</li><li class="chip">Ray</li><li class="chip">veRL</li><li class="chip">分布式训练（FSDP / DeepSpeed）</li><li class="chip">SGLang</li><li class="chip">vLLM</li><li class="chip">Hugging Face 部署</li><li class="chip">大规模数据集构建</li><li class="chip">多模态数据清洗</li><li class="chip">Git</li><li class="chip">Linux</li><li class="chip">Hadoop</li></ul>
 </article>
 </div>
 </div>
@@ -682,7 +683,7 @@ h1,h2,h3,h4{text-wrap:balance}
 <header class="sec-head">
 <p class="sec-label"><span>04</span><span>Projects</span></p>
 <h2 id="projects-title" class="sec-title">核心<span class="hl">项目</span></h2>
-<p class="sec-lead">三个核心 AI 项目：流式足球视频 Caption、从零实现的 Transformer 翻译，以及多 Agent 求职辅助工作流。</p>
+<p class="sec-lead">四个核心 AI 项目：流式足球视频 Caption、中文购物 Agent 的 SFT + GRPO 后训练、从零实现的 Transformer 翻译，以及多 Agent 求职辅助工作流。</p>
 </header>
 <div class="proj-list">
 <article id="p-soccer" class="proj c-g t-y">
@@ -715,7 +716,37 @@ h1,h2,h3,h4{text-wrap:balance}
 <a class="btn btn-sm c-y" href="files/OnlineSoccer-CSCWD2027.pdf" target="_blank" rel="noopener noreferrer"><svg class="i" aria-hidden="true"><use href="#i-file"/></svg>查看论文<span class="sr">（在新标签页打开）</span></a></div>
 </div>
 </article>
-<article class="proj rev c-b t-p">
+<article id="p-shopagent" class="proj rev c-p t-g">
+<div class="proj-media">
+<figure class="browser mw-560">
+<div class="browser-bar" aria-hidden="true"><i></i><i></i><i></i><span class="browser-url">shopsimulator · lora sft → grpo</span></div>
+<img src="assets/shopagent-results.png" alt="购物 Agent 后训练结果：200 题留出集上 strict success 从基线 0% 到 LoRA SFT 60.5%、在线 GRPO 62.0%，平均 reward 从 −0.11 到 0.47、0.52；下方为 teacher 轨迹采集、终局验收、LoRA SFT、多轮在线 GRPO 的流程" width="560" height="420" loading="lazy" decoding="async">
+</figure>
+</div>
+<div class="proj-body">
+<div class="proj-kick"><span class="proj-no">PROJECT 02</span><span class="chip fill c-o">Agentic RL</span></div>
+<h3>长程中文购物 Agent 后训练：<wbr>LoRA SFT + 多轮在线 GRPO</h3>
+<p class="proj-desc">基于 ShopSimulator v2.1 搭建中文购物 Agent 的后训练与评测流水线：Qwen3.5-2B 先做 LoRA SFT，再用 veRL 做多轮在线 GRPO。在 200 题留出集上，strict success 从 0% 提升到 62.0%，平均 reward 从 −0.11 提升到 0.52。训练用终局规则 reward，不用 LLM-as-Judge；评测由代码硬校验和双 LLM 评审组成。</p>
+<ul class="metrics" aria-label="关键指标">
+<li class="metric"><b>62.0%</b><span>strict success（基线 0%）</span></li>
+<li class="metric"><b>0.52</b><span>平均 reward（基线 −0.11）</span></li>
+<li class="metric"><b>1,000</b><span>条验收轨迹做 SFT</span></li>
+<li class="metric"><b>1 张</b><span>96GB GPU，约 110 s/步</span></li>
+</ul>
+</div>
+<div class="proj-more">
+<dl class="facts f2">
+<div><dt>数据</dt><dd>以 DeepSeek-V4-Flash 为 teacher，在模拟器中真实执行并采集 2,498 条轨迹；按终局结果严格验收后保留 1,026 条，选用 1,000 条（800 训练 / 200 验证），与 RL 训练集、评测集的 task_id 零重叠。</dd></div>
+<div><dt>LoRA SFT</dt><dd>对 Qwen3.5-2B 做 LoRA SFT，只在 assistant 动作 token 上计算 loss，屏蔽用户指令与环境观测。strict success 从 0% 提升到 60.5%，模型学会了合法的工具调用、多步搜索和正确终止。</dd></div>
+<div><dt>多轮在线 GRPO</dt><dd>在 veRL 0.8 上自研 AgentLoop 与工具适配层，从合并后的 SFT 模型出发做在线 GRPO：每题 rollout 4 条轨迹，8 个环境 worker 并行，单张 96GB GPU 平均约 110 s/步。第 100 步时 strict success 62.0%、买对率 62.5%，平均 reward 从 0.47 升到 0.52，主要减少了买错、循环和非法动作。</dd></div>
+<div><dt>Reward 设计</dt><dd>只在终局给分，结果确定、可复现。品类和预算是硬门槛，品牌 / 型号 / 核心功能 / 关键规格按 0.35 / 0.25 / 0.25 / 0.15 加权：命中目标商品得 1.0，买到完全满足需求的替代品得 0.55，部分满足最多 0.25；买错、提前放弃、重复循环、超出步数分别给不同的负分。证据不足的样本标为 <code>reward_valid=false</code>，不当作有效的 0 分。</dd></div>
+<div><dt>评测体系</dt><dd>用 DeepSeek-V4-Flash 从代码抽取的候选约束中选择并冻结 rubric，baseline / SFT / GRPO 三组共用，且不能新造约束字段；用 DeepSeek-V4-Pro 按搜索策略、候选利用、证据核验、决策质量、终止效率五个维度打 0/1/2 分，评审看不到 reward 和 gold 商品字段。结果分 reward、规则满足度、轨迹质量、效率四块报告，缺失和出错的题仍计入固定分母。</dd></div>
+<div><dt>结果（Final-200 留出集）</dt><dd>strict success / 买对率 / 平均 reward：<br>Qwen3.5-2B 基线：0.0% / 0.0% / −0.1105<br>+ LoRA SFT：60.5% / 60.5% / 0.4729<br>+ GRPO（step 100）：62.0% / 62.5% / 0.5158<br>GRPO 取 500 步计划中的第 100 步；SFT 3 个 epoch 约 3 小时，GRPO 100 步约 3–4 小时。</dd></div>
+</dl>
+<div class="proj-foot"><ul class="chips"><li class="chip">Qwen3.5-2B</li><li class="chip">veRL</li><li class="chip">GRPO</li><li class="chip">LoRA SFT</li><li class="chip">vLLM</li><li class="chip">Ray</li><li class="chip">Rule-based Reward</li></ul></div>
+</div>
+</article>
+<article class="proj c-b t-p">
 <div class="proj-media">
 <figure class="browser mw-560">
 <div class="browser-bar" aria-hidden="true"><i></i><i></i><i></i><span class="browser-url">huggingface.co/spaces/Huangxin14/translator_zh-en</span></div>
@@ -723,7 +754,7 @@ h1,h2,h3,h4{text-wrap:balance}
 </figure>
 </div>
 <div class="proj-body">
-<div class="proj-kick"><span class="proj-no">PROJECT 02</span><span class="chip fill c-y">从零实现</span></div>
+<div class="proj-kick"><span class="proj-no">PROJECT 03</span><span class="chip fill c-y">从零实现</span></div>
 <h3>基于 Transformer 架构的中英机器翻译系统</h3>
 <p class="proj-desc">参照《Attention Is All You Need》从零实现 Encoder-Decoder Transformer 翻译模型，完成中英双语 Tokenizer、平行语料清洗对齐、训练调优与 Hugging Face 在线部署，形成从模型构建到应用上线的完整闭环。</p>
 <ul class="metrics" aria-label="关键指标">
@@ -742,7 +773,7 @@ h1,h2,h3,h4{text-wrap:balance}
 <a class="btn btn-sm c-y" href="https://huggingface.co/spaces/Huangxin14/translator_zh-en" target="_blank" rel="noopener noreferrer">在线体验<svg class="i" aria-hidden="true"><use href="#i-ext"/></svg><span class="sr">（在新标签页打开）</span></a></div>
 </div>
 </article>
-<article class="proj c-y t-b">
+<article class="proj rev c-y t-b">
 <div class="proj-media">
 <figure class="browser mw-560">
 <div class="browser-bar" aria-hidden="true"><i></i><i></i><i></i><span class="browser-url">github.com/H-X1n/Interview-master</span></div>
@@ -750,7 +781,7 @@ h1,h2,h3,h4{text-wrap:balance}
 </figure>
 </div>
 <div class="proj-body">
-<div class="proj-kick"><span class="proj-no">PROJECT 03</span><span class="chip fill c-g">AI Agent</span></div>
+<div class="proj-kick"><span class="proj-no">PROJECT 04</span><span class="chip fill c-g">AI Agent</span></div>
 <h3>Resume Agent Studio：AI Agent 简历优化与模拟面试系统</h3>
 <p class="proj-desc">面向 AI 算法求职场景，搭建基于 LLM 的求职辅助工作流，根据用户资料库与岗位 JD 自动完成简历定制、匹配度评估、优化建议生成与模拟面试准备，覆盖从投递前筛选到面试前复盘的完整流程。</p>
 <ul class="metrics" aria-label="关键指标">
