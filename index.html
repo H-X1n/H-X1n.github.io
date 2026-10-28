@@ -315,6 +315,23 @@ h1,h2,h3,h4{text-wrap:balance}
 .doc-actions{display:flex;flex-wrap:wrap;gap:14px 18px;padding-top:4px}
 @media (min-width:860px){.doc-cols{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr)}.doc h3{padding-right:clamp(140px,26vw,340px)}}
 @media (max-width:859px){.stamp{position:relative;top:auto;right:auto;justify-self:start;margin:10px 0 6px 10px;transform:rotate(-6deg)}}
+/* 论文两列：宽屏下每行两张卡片，卡片内改为单列排布；单数时最后一张居中 */
+.doc-grid{display:grid;gap:clamp(40px,6vw,76px) clamp(28px,3vw,44px)}
+.doc-grid>.doc+.doc{margin-top:0}
+@media (min-width:1100px){
+.doc-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.doc-grid>.doc{display:flex;flex-direction:column;max-width:none;margin:0}
+.doc-grid .doc-head{display:grid;grid-template-columns:repeat(2,max-content);gap:2px 26px}
+.doc-grid>.doc:last-child:nth-child(odd){grid-column:1/-1;justify-self:center;width:calc(50% - clamp(28px,3vw,44px)/2)}
+.doc-grid .doc-body{flex:1;display:flex;flex-direction:column;gap:20px;padding:clamp(22px,2.4vw,34px);font-size:16px}
+.doc-grid .stamp{position:relative;top:auto;right:auto;align-self:flex-start;margin:6px 0 2px 8px;padding:7px 14px 6px;font-size:20px;transform:rotate(-5deg)}
+.doc-grid .doc h3{padding-right:0;font-size:clamp(24px,2.1vw,30px)}
+.doc-grid .doc-aff{margin-top:-4px}
+.doc-grid .metrics.m3{grid-template-columns:minmax(0,1fr);gap:10px}
+.doc-grid .metric b{font-size:24px}
+.doc-grid .doc-cols{grid-template-columns:minmax(0,1fr);gap:22px}
+.doc-grid .doc-actions{margin-top:auto;padding-top:8px}
+}
 .medal svg{fill:var(--c);stroke:var(--ink);stroke-width:3px;stroke-linejoin:round}
 .medal .tail{fill:var(--c2)}
 .medal .tail-r{fill:var(--c3,var(--c2))}
@@ -823,6 +840,7 @@ h1,h2,h3,h4{text-wrap:balance}
 <h2 id="publications-title" class="sec-title">学术<span class="hl">论文</span></h2>
 <p class="sec-lead">五篇论文（4 篇第一作者、1 篇共同第一作者），覆盖视频广告推荐、多模态视频理解、指令数据选择与视觉识别：4 篇在投，1 篇改投中。</p>
 </header>
+<div class="doc-grid">
 <article class="doc">
 <p class="doc-head"><span>Paper No. 01</span><span>Venue · WWW</span><span>Rank · CCF-A</span><span>Role · 第一作者</span></p>
 <div class="doc-body">
@@ -984,6 +1002,7 @@ h1,h2,h3,h4{text-wrap:balance}
 </div>
 </div>
 </article>
+</div>
 </div>
 </section>
 <!-- ===== EDUCATION ===== -->
