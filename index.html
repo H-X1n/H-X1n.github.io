@@ -125,7 +125,8 @@ h1,h2,h3,h4{text-wrap:balance}
 .hero-art:hover .idcard{transform:rotate(calc(3deg - 5deg*var(--tilt)))}
 .idcard-top{display:flex;align-items:center;justify-content:flex-end;gap:10px;padding:14px 18px;background:var(--blue);border-bottom:var(--line);font-size:12px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;line-height:1.2}
 .idcard-body{display:grid;grid-template-columns:auto minmax(0,1fr);gap:16px 18px;align-items:center;padding:20px}
-.idcard-photo{display:grid;place-items:center;width:92px;height:104px;background:var(--yellow);border:var(--line);font-size:40px;font-weight:700;letter-spacing:-.04em}
+.idcard-photo{display:grid;place-items:center;width:92px;height:104px;overflow:hidden;background:var(--yellow);border:var(--line);font-size:40px;font-weight:700;letter-spacing:-.04em}
+.idcard-photo img{display:block;width:100%;height:100%;object-fit:cover}
 .idcard-name{font-size:42px;font-weight:600;line-height:1}
 .idcard-name small{display:block;margin-top:8px;font-size:12px;font-weight:700;letter-spacing:.24em}
 .idcard-role{display:inline-block;margin-top:10px;padding:2px 10px;background:var(--ink);color:var(--bg);font-size:15px;font-weight:600;line-height:1.5}
@@ -461,7 +462,7 @@ h1,h2,h3,h4{text-wrap:balance}
 <div class="idcard">
 <div class="idcard-top"><span>求职工牌 · Job Badge</span></div>
 <div class="idcard-body">
-<div class="idcard-photo">HX</div>
+<div class="idcard-photo"><img src="assets/badge-photo.png" alt="黄鑫的工牌照片" width="258" height="294"></div>
 <div><p class="idcard-name">黄鑫<small>HUANG XIN</small></p><span class="idcard-role">AI 算法工程师</span></div>
 <dl class="idcard-dl">
 <dt>School</dt><dd>大连交通大学</dd>
