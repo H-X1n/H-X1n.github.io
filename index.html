@@ -437,7 +437,7 @@ h1,h2,h3,h4{text-wrap:balance}
 <p class="eyebrow"><span class="dot" aria-hidden="true"></span>2028 届硕士生 </p>
 <h1 id="hero-title" class="hero-title"><span>你好，</span><span>我是黄鑫</span></h1>
 <p class="hero-role">求职方向 → <span class="marker">AI 算法工程师</span></p>
-<p class="hero-intro"><strong>大连交通大学 · 交通信息工程及控制 硕士<span class="nw">（2025.9 – 至今）</span></strong>方向：多模态内容理解/推荐</p>
+<p class="hero-intro"><strong>大连交通大学 · 交通信息工程及控制 硕士<span class="nw">（2025.9 – 至今）</span></strong>关注方向：多模态内容理解/推荐</p>
 <div class="hero-cta">
 <a class="btn btn-lg c-y" href="files/黄鑫-AI算法工程师-简历.pdf" download><svg class="i" aria-hidden="true"><use href="#i-dl"/></svg>下载简历</a>
 <a class="btn btn-lg c-w" href="#contact">联系我 <span aria-hidden="true">→</span></a>
@@ -469,7 +469,7 @@ h1,h2,h3,h4{text-wrap:balance}
 
 <li><a class="stat c-p" href="#publications"><b>5<span>篇</span></b><small><span><span class="nw">一作论文（含共一）</span> <span class="nw">4 篇在投</span></span></small></a></li><li><a class="stat c-p" href="#internship" style="--c: var(--yellow);"><b style="color: var(--ink);">2<br><span>段实习</span></b><small><span><span style="color: rgb(47, 91, 234);"><span style="color: rgb(229, 72, 77);">咪咕</span> · 百度</span></span></small></a></li>
 <li><a class="stat c-b" href="#competitions"><b>银牌</b><small><span><span class="nw">Kaggle</span> <span class="nw">机器翻译赛</span></span></small></a></li>
-<li><a class="stat c-g" href="#competitions"><b><span>Top</span>6.3%</b><small><span><span class="nw">天池大奖赛</span> <span class="nw">64 / 1028</span></span></small></a></li>
+<li><a class="stat c-g" href="#competitions"><b><span>Top</span>6.2%</b><small><span><span class="nw">天池大奖赛</span> <span class="nw">64 / 1028</span></span></small></a></li>
 </ul>
 </div>
 </section>
@@ -517,9 +517,9 @@ h1,h2,h3,h4{text-wrap:balance}
 </article>
 <article class="skill c-g">
 <div class="skill-top"><span class="skill-ico"><svg aria-hidden="true"><use href="#s-rag"/></svg></span><span class="skill-no">04</span></div>
-<h3>RAG &amp; 检索增强</h3>
-<p class="skill-en">Retrieval</p>
-<ul class="chips"><li class="chip">BGE-M3</li><li class="chip">BGE-Reranker-v2</li><li class="chip">Qwen3-VL-Embedding</li><li class="chip">Qwen3-VL-Reranker</li><li class="chip">向量检索</li><li class="chip">语义重排</li></ul>
+<h3>检索 &amp; 推荐</h3>
+<p class="skill-en">Retrieval &amp; RecSys</p>
+<ul class="chips"><li class="chip">RAG</li><li class="chip">BGE-M3</li><li class="chip">BGE-Reranker-v2</li><li class="chip">Qwen3-VL-Embedding</li><li class="chip">Qwen3-VL-Reranker</li><li class="chip">向量检索</li><li class="chip">语义重排</li><li class="chip">DCN</li><li class="chip">多任务 CTR 预估</li><li class="chip">Listwise 排序</li></ul>
 </article>
 <article class="skill c-o">
 <div class="skill-top"><span class="skill-ico"><svg aria-hidden="true"><use href="#s-eng"/></svg></span><span class="skill-no">05</span></div>
@@ -556,7 +556,7 @@ h1,h2,h3,h4{text-wrap:balance}
 <ul class="pts">
 <li><strong>模型</strong>：<br>Base model选择google/gemma-4-E4B-it——模型支持视觉、语言、音频输入<br>模型最后一层token做avg pooling后接上Score head<br>Score head 结构为：Linear(2560, 2048) -&gt; GELU -&gt; Dropout(0.1) -&gt; Linear(2048, 1)</li>
 <li><strong>数据</strong>：包含视频及视频对应的后验指标CTR，筛选视频曝光数eshow&gt;1w</li>
-<li><strong>模型输入</strong>：<br><span class="hl" style="--hl: var(--green);">视频</span>：取前 16 秒，0.5 FPS 采样，共 8 帧，长边缩放到不超过 384<br><span class="hl" style="--hl: var(--green);">音频</span>：单声道、16 kHz，最长 16 秒<br><span class="hl" style="--hl: var(--green);">文本输入</span>：How would you judge the Click-Through Rate of the given content, where Click-Through Rate represents the probability of click this video</li><li><strong>训练</strong>：冻结视觉编码器，训练LLM LoRA+Visual proj+Audio encoder+Audio proj</li><li><span class="hl" style="--hl: var(--yellow);">离线指标</span>：auc=0.674-&gt;<span class="hl" style="--hl: var(--pink);">0.725</span></li><li><span class="hl" style="--hl: var(--yellow);">线上收益AA-AB</span>：<span style="color: rgb(229, 72, 77);"><span style="color: var(--ink);"><span class="hl" style="--hl: var(--pink);">20%流量，实验4天<span class="hl" style="--hl: var(--paper);"> <span class="hl" style="--hl: var(--blue);">80—信息流 90—直播</span></span><br></span></span></span><span class="hl" style="--hl: var(--green);">（80+90）整体AA-AB</span><br><span style="color: rgb(229, 72, 77);"><span style="color: var(--ink);">charge</span>+1.97% <span style="color: var(--ink);">click</span>+3.47% <span style="color: var(--ink);">ctcvr</span>+3.07% <span style="color: var(--ink);">gmv</span>+3.96%<span style="color: var(--ink);">conv</span>+4.31% <span style="color: var(--ink);">eshow</span>+2.01%<span style="color: var(--ink);">ctr</span>+3.084%<span style="color: var(--ink);">cvr</span>+0.9930%<br></span><span class="hl" style="--hl: var(--green);">80—AA-AB</span><br>charge<span style="color: rgb(21, 128, 61);">-13.40%</span> click<span style="color: rgb(21, 128, 61);">-6.57%</span>  ctcvr<span style="color: rgb(229, 72, 77);">+13.98%</span> gmv<span style="color: rgb(229, 72, 77);">+5.63%</span>conv<span style="color: rgb(21, 128, 61);">-6.25%</span> <br>eshow<span style="color: rgb(21, 128, 61);">-17.75%</span>ctr<span style="color: rgb(229, 72, 77);">+5.5881%</span>cvr<span style="color: rgb(229, 72, 77);">+0.3444%</span><br><span class="hl" style="--hl: var(--green);">90—AA-AB</span><br><span style="color: var(--ink);">charge</span><span style="color: rgb(229, 72, 77);">+2.37%</span> click<span style="color: rgb(229, 72, 77);">+3.31% </span>ctcvr<span style="color: rgb(229, 72, 77);">+2.88%</span> gmv<span style="color: rgb(229, 72, 77);">+3.64%</span>conv<span style="color: rgb(229, 72, 77);">+4.08%</span> eshow<span style="color: rgb(229, 72, 77);">+2.42%</span>ctr<span style="color: rgb(229, 72, 77);">+1.7407%</span>cvr<span style="color: rgb(229, 72, 77);">+1.0287%</span></li><li><span class="hl" style="--hl: var(--yellow);">复盘</span>：<br>当前版本模型存在以下问题：模型参数量大且训练速度慢。80/90流量比为15/85，训练忽略80/90聚合得到视频ctr，模型主要学习到是90上特征分布。因此最终导致线上实验80负向，90正向。</li>
+<li><strong>模型输入</strong>：<br><span class="hl" style="--hl: var(--green);">视频</span>：取前 16 秒，0.5 FPS 采样，共 8 帧，长边缩放到不超过 384<br><span class="hl" style="--hl: var(--green);">音频</span>：单声道、16 kHz，最长 16 秒<br><span class="hl" style="--hl: var(--green);">文本输入</span>：How would you judge the Click-Through Rate of the given content, where Click-Through Rate represents the probability of clicking this video</li><li><strong>训练</strong>：冻结视觉编码器，训练LLM LoRA+Visual proj+Audio encoder+Audio proj</li><li><span class="hl" style="--hl: var(--yellow);">离线指标</span>：auc=0.674-&gt;<span class="hl" style="--hl: var(--pink);">0.725</span></li><li><span class="hl" style="--hl: var(--yellow);">线上收益AA-AB</span>：<span style="color: rgb(229, 72, 77);"><span style="color: var(--ink);"><span class="hl" style="--hl: var(--pink);">20%流量，实验4天<span class="hl" style="--hl: var(--paper);"> <span class="hl" style="--hl: var(--blue);">80—信息流 90—直播</span></span><br></span></span></span><span class="hl" style="--hl: var(--green);">（80+90）整体AA-AB</span><br><span style="color: rgb(229, 72, 77);"><span style="color: var(--ink);">charge</span>+1.97% <span style="color: var(--ink);">click</span><span class="hl" style="--hl: var(--orange);">+3.47%</span> <span style="color: var(--ink);">ctcvr</span><span class="hl" style="--hl: var(--orange);">+3.07%</span> <span style="color: var(--ink);">gmv</span>+3.96%<span style="color: var(--ink);">conv</span><span class="hl" style="--hl: var(--orange);">+4.31%</span> <span style="color: var(--ink);">eshow</span>+2.01%<span style="color: var(--ink);">ctr</span><span class="hl" style="--hl: var(--orange);">+3.084%</span><span style="color: var(--ink);">cvr</span><span class="hl" style="--hl: var(--orange);">+0.9930%</span><br></span><span class="hl" style="--hl: var(--green);">80—AA-AB</span><br>charge<span style="color: rgb(21, 128, 61);">-13.40%</span> click<span style="color: rgb(21, 128, 61);">-6.57%</span>  ctcvr<span style="color: rgb(229, 72, 77);">+13.98%</span> gmv<span style="color: rgb(229, 72, 77);">+5.63%</span>conv<span style="color: rgb(21, 128, 61);">-6.25%</span> <br>eshow<span style="color: rgb(21, 128, 61);">-17.75%</span>ctr<span style="color: rgb(229, 72, 77);"><span class="hl" style="--hl: var(--orange);">+5.5881%</span></span>cvr<span style="color: rgb(229, 72, 77);">+0.3444%</span><br><span class="hl" style="--hl: var(--green);">90—AA-AB</span><br><span style="color: var(--ink);">charge</span><span style="color: rgb(229, 72, 77);">+2.37%</span> click<span style="color: rgb(229, 72, 77);">+3.31% </span>ctcvr<span style="color: rgb(229, 72, 77);"><span class="hl" style="--hl: var(--orange);">+2.88%</span></span> gmv<span style="color: rgb(229, 72, 77);">+3.64%</span>conv<span style="color: rgb(229, 72, 77);">+4.08%</span> eshow<span style="color: rgb(229, 72, 77);">+2.42%</span>ctr<span style="color: rgb(229, 72, 77);"><span class="hl" style="--hl: var(--orange);">+1.7407%</span></span>cvr<span style="color: rgb(229, 72, 77);"><span class="hl" style="--hl: var(--orange);">+1.0287%</span></span></li><li><span class="hl" style="--hl: var(--yellow);">复盘</span>：<br>当前版本模型存在以下问题：模型参数量大且训练速度慢。80/90流量比为15/85，训练忽略80/90聚合得到视频ctr，模型主要学习到是90上特征分布。因此最终导致线上实验80负向，90正向。</li>
 </ul>
 <p class="acc-link"></p>
 </div>
@@ -566,11 +566,11 @@ h1,h2,h3,h4{text-wrap:balance}
 <summary><span class="acc-no">02</span><span class="acc-title"><span class="acc-tag">核心项目</span>视频优选模型vmmax-v2</span><span class="acc-ico" aria-hidden="true"></span></summary>
 <div class="acc-body">
 <div class="acc-main">
-<p>相比上一个版本端到端的训练，改为传统两阶段训练：<br> 1.基于业务指标训练一个多模态表征模型，表征模型输出多模态表征向量 <br>2.表征向量作为内容特征进入下游推荐模型TREAD ，训练推荐模型<br>相比于传统内容向量来源于表征模型最后一层，TREAD将表征模型多层内容向量投影成固定维度的token与token化的商品侧特征以及task-query token做交互，通过task-query token对其余token的注意力分数进行剪枝，最后在兼顾计算量的同时提高了评测指标。<br>线上的视频score基于预测ctr/ctcvr/play5分数的加权和。</p>
+<p>针对 v1 的问题，由端到端训练改为传统两阶段训练，并把 transtype（80/90）作为特征注入下游推荐模型：<br> 1.基于业务指标训练一个多模态表征模型，表征模型输出多模态表征向量 <br>2.表征向量作为内容特征进入下游推荐模型TREAD ，训练推荐模型<br>相比于传统内容向量来源于表征模型最后一层，TREAD将表征模型多层内容向量投影成固定维度的token与token化的商品侧特征以及task-query token做交互，通过task-query token对其余token的注意力分数进行剪枝，最后在兼顾计算量的同时提高了评测指标。<br>线上的视频score基于预测ctr/ctcvr/play5分数的加权和。</p>
 <ul class="pts">
-<li><strong>模型</strong>：<br>——Base model选择google/gemma-4-E4B-it——模型支持视觉、语言、音频输入 <br>模型最后一层token做avg pooling后接上Score head <br>Score head 结构为：Linear(2560, 2048) -&gt; GELU -&gt; Dropout(0.1) -&gt; Linear(2048, 1)<br>基于业务指标（CTR/CTCVR/Play5）预测任务训练<br>——推荐模型TREAD选用DCN+TREAD layer组成，其中TREAD layer为单层self-attention+ffn</li>
-<li><strong>数据</strong>：<br>商品侧特征videourl、shopid、spuid、brand、floating_price、company <br>内容表征 video_emb（由多模态表征模型推理得到）</li>
-<li><strong>训练</strong>：TREAD采取曝光粒度训练，BCE损失</li><li><span class="hl" style="--hl: var(--yellow);">离线指标</span>：ctr auc=0.743-&gt;<span class="hl" style="--hl: var(--pink);">0.765</span> ，ctcvr auc=0.742 ，play5 auc=0.778 </li><li><span class="hl" style="--hl: var(--yellow);">线上收益AA-AB</span>：<span style="color: rgb(229, 72, 77);"><span style="color: var(--ink);"><span class="hl" style="--hl: var(--pink);">20%流量，实验5天 <span class="hl" style="--hl: var(--blue);">80—信息流 90—直播</span><br></span></span></span><span class="hl" style="--hl: var(--green);">（80+90）整体A/B</span><br><span style="color: rgb(229, 72, 77);"><span style="color: var(--ink);">charge</span>+9.49% <span style="color: var(--ink);">click</span>+10.14% <span style="color: var(--ink);">ctcvr</span>+8.19% <span style="color: var(--ink);">gmv</span>+15.61%<span style="color: var(--ink);">conv</span>+15.90% <span style="color: var(--ink);">eshow</span>+7.13%<span style="color: var(--ink);">ctr</span>+2.8093%<span style="color: var(--ink);">cvr</span>+5.2323%<br></span><span class="hl" style="--hl: var(--green);">80—AA-AB</span><br>charge<span style="color: rgb(229, 72, 77);">+1.48%</span> click<span style="color: rgb(21, 128, 61);"><span style="color: rgb(229, 72, 77);">+4.21%</span></span>  ctcvr<span style="color: rgb(229, 72, 77);">+1.62%</span> gmv<span style="color: rgb(229, 72, 77);">+8.32%</span>conv<span style="color: rgb(229, 72, 77);">+6.31%</span><br>eshow<span style="color: rgb(229, 72, 77);">+1.04%</span>ctr<span style="color: rgb(229, 72, 77);">+3.301%</span>cvr<span style="color: rgb(229, 72, 77);">+0.9021%</span><br><span class="hl" style="--hl: var(--green);">90—AA-AB</span><span style="color: rgb(229, 72, 77);"><br><span style="color: rgb(229, 72, 77);"><span style="color: var(--ink);">charge</span>+12.38%</span><span style="color: var(--ink);"></span> <span style="color: var(--ink);">click</span>+13.09% <span style="color: var(--ink);">ctcvr</span>+4.07% <span style="color: var(--ink);">gmv</span>+16.12%<span style="color: var(--ink);">conv</span>+18.89% <span style="color: var(--ink);">eshow</span>+7.25%<span style="color: var(--ink);">ctr</span>+1.0155%<span style="color: var(--ink);">cvr</span>+5.1337%</span></li><li><span class="hl" style="--hl: var(--yellow);">成果已整理为论文，投稿 WWW 2027（在投）</span></li>
+<li><strong>模型</strong>：<br>——表征模型：Base model选择google/gemma-4-E4B-it——模型支持视觉、语言、音频输入 <br>模型最后一层token做avg pooling后接上Score head <br>Score head 结构为：Linear(2560, 2048) -&gt; GELU -&gt; Dropout(0.1) -&gt; Linear(2048, 1)<br>——推荐模型TREAD选用DCN+TREAD layer组成，其中TREAD layer为单层self-attention+ffn，基于业务指标（CTR/CTCVR/Play5）三任务训练</li>
+<li><strong>数据</strong>：<br>商品侧特征videourl、shopid、spuid、brand、floating_price、company <br>投放上下文 transtype（80/90） <br>内容表征：多模态表征模型 21 层的 hidden state（L1、L3 … L41），离线推理得到</li>
+<li><strong>训练</strong>：表征模型采用listwise训练；下游推荐模型TREAD采取曝光粒度训练，BCE损失</li><li><span class="hl" style="--hl: var(--yellow);">离线指标</span>（另一份评测集，与论文不同）：ctr auc=0.743-&gt;<span class="hl" style="--hl: var(--pink);">0.765</span> ，ctcvr auc=0.742 ，play5 auc=0.778 </li><li><span class="hl" style="--hl: var(--yellow);">线上收益AA-AB</span>：<span style="color: rgb(229, 72, 77);"><span style="color: var(--ink);"><span class="hl" style="--hl: var(--pink);">20%流量，实验5天 <span class="hl" style="--hl: var(--blue);">80—信息流 90—直播</span><br></span></span></span><span class="hl" style="--hl: var(--green);">（80+90）整体AA-AB</span><br><span style="color: rgb(229, 72, 77);"><span style="color: var(--ink);">charge</span>+9.49% <span style="color: var(--ink);">click</span>+10.14% <span style="color: var(--ink);">ctcvr</span>+8.19% <span style="color: var(--ink);">gmv</span>+15.61%<span style="color: var(--ink);">conv</span>+15.90% <span style="color: var(--ink);">eshow</span>+7.13%<span style="color: var(--ink);">ctr</span>+2.8093%<span style="color: var(--ink);">cvr</span>+5.2323%<br></span><span class="hl" style="--hl: var(--green);">80—AA-AB</span><br>charge<span style="color: rgb(229, 72, 77);">+1.48%</span> click<span style="color: rgb(21, 128, 61);"><span style="color: rgb(229, 72, 77);">+4.21%</span></span>  ctcvr<span style="color: rgb(229, 72, 77);"><span class="hl" style="--hl: var(--orange);">+1.62%</span></span> gmv<span style="color: rgb(229, 72, 77);">+8.32%</span>conv<span style="color: rgb(229, 72, 77);">+6.31%</span><br>eshow<span style="color: rgb(229, 72, 77);">+1.04%</span>ctr<span style="color: rgb(229, 72, 77);"><span class="hl" style="--hl: var(--orange);">+3.301%</span></span>cvr<span style="color: rgb(229, 72, 77);"><span class="hl" style="--hl: var(--orange);">+0.9021%</span></span><br><span class="hl" style="--hl: var(--green);">90—AA-AB</span><span style="color: rgb(229, 72, 77);"><br><span style="color: rgb(229, 72, 77);"><span style="color: var(--ink);">charge</span>+12.38%</span><span style="color: var(--ink);"></span> <span style="color: var(--ink);">click</span>+13.09% <span style="color: var(--ink);">ctcvr</span><span class="hl" style="--hl: var(--orange);">+4.07%</span> <span style="color: var(--ink);">gmv</span>+16.12%<span style="color: var(--ink);">conv</span>+18.89% <span style="color: var(--ink);">eshow</span><span class="hl" style="--hl: var(--orange);">+7.25%</span><span style="color: var(--ink);">ctr</span><span class="hl" style="--hl: var(--orange);">+1.0155%</span><span style="color: var(--ink);">cvr</span>+5.1337%</span></li><li><span class="hl" style="--hl: var(--yellow);">成果已整理为论文，投稿 WWW 2027（在投）</span></li>
 </ul>
 <p class="acc-link"></p>
 </div>
@@ -584,7 +584,7 @@ h1,h2,h3,h4{text-wrap:balance}
 <ul class="pts">
 <li><strong>模型</strong>：Qwen3-vl-embedding-8b</li>
 <li><strong>数据</strong>：切片后的视频、视频asr提取的文本、商品id、商品类别</li>
-<li><strong>训练</strong>：损失函数infoNCE,采用对比学习+MRL训练的方式训练embedding模型。其中同商品id下的视频切片为正样本，不同商品id下的视频切片为负样本，相同商品类别且不同商品id的视频切片为难负样本。<br>参考论文：https://www.alphaxiv.org/pdf/2511.11305</li><li><span class="hl" style="--hl: var(--yellow);">评测指标</span>：<br>输出维度4096/1024/512/256/128/64情况下<br><span class="hl" style="--hl: var(--pink);">4096 维</span> <br>Recall@1：95.2812 → 96.6654 <span style="color: var(--ink);">(<span style="color: rgb(229, 72, 77);">+1.3842</span>)</span> <br>Recall@5：98.3303 → 98.7755 (<span style="color: rgb(229, 72, 77);">+0.4453</span>) <br>Recall@10：98.9352 → 99.2305 (<span style="color: rgb(229, 72, 77);">+0.2952</span>) <br><span class="hl" style="--hl: var(--pink);">1024 维</span> <br>Recall@1：95.2812 → 96.6654 (<span style="color: rgb(229, 72, 77);">+1.3842</span>) <br>Recall@5：98.2915 → 98.7368 (<span style="color: rgb(229, 72, 77);">+0.4453</span>) <br>Recall@10：98.9401 → 99.2063 (<span style="color: rgb(229, 72, 77);">+0.2662</span>) <br><span class="hl" style="--hl: var(--pink);">512 维</span> <br>Recall@1：95.2086 → 96.5637 (<span style="color: rgb(229, 72, 77);">+1.3551</span>) <br>Recall@5：98.2577 → 98.7949 (<span style="color: rgb(229, 72, 77);">+0.5372</span>) <br>Recall@10：98.9207 → 99.2353 (<span style="color: rgb(229, 72, 77);">+0.3146</span>) <br><span class="hl" style="--hl: var(--pink);">256 维</span> <br>Recall@1：94.9424 → 96.4911 (<span style="color: rgb(229, 72, 77);">+1.5487</span>) <br>Recall@5：98.1802 → 98.7223 (<span style="color: rgb(229, 72, 77);">+0.5421</span>) <br>Recall@10：98.8530 → 99.1772 (<span style="color: rgb(229, 72, 77);">+0.3243</span>) <br><span class="hl" style="--hl: var(--pink);">128 维</span> <br>Recall@1：94.5988 → 96.2782 (<span style="color: rgb(229, 72, 77);">+1.6794</span>) <br>Recall@5：98.0254 → 98.6013 (<span style="color: rgb(229, 72, 77);">+0.5759</span>) <br>Recall@10：98.7610 → 99.0369 (<span style="color: rgb(229, 72, 77);">+0.2759</span>) <br><span class="hl" style="--hl: var(--pink);">64 维</span> <br>Recall@1：93.9018 → 95.8620 (<span style="color: rgb(229, 72, 77);">+1.9601</span>) <br>Recall@5：97.5220 → 98.4513 (<span style="color: rgb(229, 72, 77);">+0.9292</span>) <br>Recall@10：98.3593 → 98.8965 (<span style="color: rgb(229, 72, 77);">+0.5372</span>)</li>
+<li><strong>训练</strong>：损失函数infoNCE,采用对比学习+MRL训练的方式训练embedding模型。其中同商品id下的视频切片为正样本，不同商品id下的视频切片为负样本，相同商品类别且不同商品id的视频切片为难负样本。<br>参考论文：<a href="https://arxiv.org/abs/2511.11305" target="_blank" rel="noopener noreferrer">MOON Embedding（arXiv:2511.11305）<span class="sr">（在新标签页打开）</span></a></li><li><span class="hl" style="--hl: var(--yellow);">评测指标</span>：<br>输出维度4096/1024/512/256/128/64情况下（Base → epoch-5）<br><span class="hl" style="--hl: var(--pink);">4096 维</span> <br>Recall@1：95.2812 → 96.6654 <span style="color: var(--ink);">(<span style="color: rgb(229, 72, 77);">+1.3842</span>)</span> <br>Recall@5：98.3303 → 98.7755 (<span style="color: rgb(229, 72, 77);">+0.4453</span>) <br>Recall@10：98.9352 → 99.2305 (<span style="color: rgb(229, 72, 77);">+0.2952</span>) <br><span class="hl" style="--hl: var(--pink);">1024 维</span> <br>Recall@1：95.2812 → 96.6654 (<span style="color: rgb(229, 72, 77);">+1.3842</span>) <br>Recall@5：98.2915 → 98.7368 (<span style="color: rgb(229, 72, 77);">+0.4453</span>) <br>Recall@10：98.9401 → 99.2063 (<span style="color: rgb(229, 72, 77);">+0.2662</span>) <br><span class="hl" style="--hl: var(--pink);">512 维</span> <br>Recall@1：95.2086 → 96.5637 (<span style="color: rgb(229, 72, 77);">+1.3551</span>) <br>Recall@5：98.2577 → 98.7949 (<span style="color: rgb(229, 72, 77);">+0.5372</span>) <br>Recall@10：98.9207 → 99.2353 (<span style="color: rgb(229, 72, 77);">+0.3146</span>) <br><span class="hl" style="--hl: var(--pink);">256 维</span> <br>Recall@1：94.9424 → 96.4911 (<span style="color: rgb(229, 72, 77);">+1.5487</span>) <br>Recall@5：98.1802 → 98.7223 (<span style="color: rgb(229, 72, 77);">+0.5421</span>) <br>Recall@10：98.8530 → 99.1772 (<span style="color: rgb(229, 72, 77);">+0.3243</span>) <br><span class="hl" style="--hl: var(--pink);">128 维</span> <br>Recall@1：94.5988 → 96.2782 (<span style="color: rgb(229, 72, 77);">+1.6794</span>) <br>Recall@5：98.0254 → 98.6013 (<span style="color: rgb(229, 72, 77);">+0.5759</span>) <br>Recall@10：98.7610 → 99.0369 (<span style="color: rgb(229, 72, 77);">+0.2759</span>) <br><span class="hl" style="--hl: var(--pink);">64 维</span> <br>Recall@1：93.9018 → 95.8620 (<span style="color: rgb(229, 72, 77);">+1.9601</span>) <br>Recall@5：97.5220 → 98.4513 (<span style="color: rgb(229, 72, 77);">+0.9292</span>) <br>Recall@10：98.3593 → 98.8965 (<span style="color: rgb(229, 72, 77);">+0.5372</span>)</li>
 </ul>
 <p class="acc-link"></p>
 </div>
@@ -669,7 +669,7 @@ h1,h2,h3,h4{text-wrap:balance}
 <header class="sec-head">
 <p class="sec-label"><span>04</span><span>Projects</span></p>
 <h2 id="projects-title" class="sec-title">核心<span class="hl">项目</span></h2>
-<p class="sec-lead"></p>
+<p class="sec-lead">三个核心 AI 项目：流式足球视频 Caption、从零实现的 Transformer 翻译，以及多 Agent 求职辅助工作流。</p>
 </header>
 <div class="proj-list">
 <article id="p-soccer" class="proj c-g t-y">
@@ -793,14 +793,14 @@ h1,h2,h3,h4{text-wrap:balance}
 <article class="comp">
 <div class="medal c-y t-b t3-g" aria-hidden="true">
 <svg viewBox="0 0 100 150"><path class="tail" vector-effect="non-scaling-stroke" d="M28 74L14 140l15-8 9 13 14-63z"/><path class="tail tail-r" vector-effect="non-scaling-stroke" d="M72 74l14 66-15-8-9 13-14-63z"/><use href="#burst20" x="0" y="0" width="100" height="100"/><circle class="disc" vector-effect="non-scaling-stroke" cx="50" cy="50" r="33"/><circle class="ring" cx="50" cy="50" r="28"/></svg>
-<span class="medal-txt"><small>TOP</small><b>6.3%</b><small>64 / 1028</small></span>
+<span class="medal-txt"><small>TOP</small><b>6.2%</b><small>64 / 1028</small></span>
 </div>
 <div class="comp-main">
 <div class="comp-top"><span class="chip fill c-g">64 / 1028</span><span class="chip">2026.02</span></div>
 <h3>阿里云 Data+AI 工程师全球大奖赛：高校赛道</h3>
 <p class="comp-sub">“寻找 AI 全能王”天池竞赛</p>
 <ul class="metrics m3" aria-label="关键指标">
-<li class="metric c-o"><b>Top 6.3%</b><span>64 / 1028</span></li>
+<li class="metric c-o"><b>Top 6.2%</b><span>64 / 1028</span></li>
 <li class="metric c-o"><b>ReAct</b><span>Research Agent</span></li>
 <li class="metric c-o"><b>MCP</b><span>联网搜索工具</span></li>
 </ul>
@@ -840,7 +840,7 @@ h1,h2,h3,h4{text-wrap:balance}
 <div>
 <h4>方法贡献</h4>
 <ul class="pts">
-<li>把冻结多模态表征模型的中<strong>不同层的hidden state</strong>分别投影成 token，与 <strong>1 个结构化特征 token</strong>、CTR / CTCVR / Play5 <strong>三个任务 query</strong> 一起送入同一个 8 头自注意力块，为每个任务保留一条可检查的「编码器深度 → 输出」路径。</li>
+<li>把冻结多模态表征模型中<strong>不同层的 hidden state</strong> 分别投影成 token，与 <strong>1 个结构化特征 token</strong>、CTR / CTCVR / Play5 <strong>三个任务 query</strong> 一起送入同一个 8 头自注意力块，为每个任务保留一条可检查的「编码器深度 → 输出」路径。</li>
 <li>用训练集上的 query 注意力给内容 token 排序，推理前直接删掉低排名 token，<strong>不重新训练、不重新选模型</strong>；对照实验显示最后一层 L41 是必需 token，去掉后 CTR AUC 至少下降 8%。</li>
 <li>结构化特征 token 经 cross/deep 网络融合 5 个商品字段、投放上下文、视频 URL 与价格，使内容与业务特征在同一注意力归一化下交互。</li>
 </ul>
@@ -904,7 +904,7 @@ h1,h2,h3,h4{text-wrap:balance}
 <div>
 <h4>方法贡献</h4>
 <ul class="pts">
-<li>在 <strong>K=5、U=2</strong> 下枚举全部 7 种记录分配，随机化组位置并匹配每条记录的入选概率，使类别原型期望不变、只让支持集协方差与决策边界发生变化。</li>
+<li>在 <strong>K=5</strong> 下枚举全部 7 种记录分配（U=1–5），以 U=2 的 4+1 vs 3+2 为主对照；随机化组位置并匹配每条记录的入选概率，使类别原型期望不变、只让支持集协方差与决策边界发生变化。</li>
 <li>同时给出 ridge 与 RBF SVM 两套分析，并用原型与协方差对照排除「支持集离散度」这一替代解释。</li>
 <li>用近似联合 95% 区间报告效应量，说明支持分配 q 应当成为小样本比较中必须对齐并报告的变量。</li>
 </ul>
@@ -927,7 +927,7 @@ h1,h2,h3,h4{text-wrap:balance}
 <h3>OnlineSoccer: Compact Video Captioning with a Causal Spatiotemporal Projector</h3>
 <p class="doc-aff">第一作者 · 咪咕视讯实习成果</p>
 <ul class="chips" aria-label="论文标签"><li class="chip fill c-p">CSCWD 2027 在投</li><li class="chip fill c-y">CCF-C</li><li class="chip fill c-b">第一作者</li></ul>
-<p class="doc-abs">给足球片段生成解说草稿时，每个片段都要占用一次语言模型的注意力计算与 KV 存储，稠密视觉前缀让这个成本很高。直接采样虽然缩短了序列，却让未采样的帧完全无法参与生成。OnlineSoccer 先把时序证据聚合再做输出选择：Temporal Mamba Proj 用降宽的因果状态空间模型逐时间单元更新，配合空间池化与通道打包压缩前缀；推理时只需调整 Temporal sample ratio 就能改变视觉 token 预算，无需重新训练。</p>
+<p class="doc-abs">给足球片段生成解说草稿时，每个片段都要占用一次语言模型的注意力计算与 KV 存储，稠密视觉前缀让这个成本很高。直接采样虽然缩短了序列，却让未采样的帧完全无法参与生成。OnlineSoccer 先把时序证据聚合再做输出选择：Temporal Mamba Proj 用降宽的因果状态空间模型逐时间单元更新，配合空间池化与通道打包压缩前缀；推理时只需调整输出 stride 就能改变视觉 token 预算，无需重新训练。</p>
 <ul class="metrics m3" aria-label="关键指标">
 <li class="metric c-y"><b>112 vs 1,792</b><span>视觉 token（约 16×）</span></li>
 <li class="metric c-y"><b>37.54</b><span>CIDEr（56 token / stride-2）</span></li>
@@ -939,7 +939,7 @@ h1,h2,h3,h4{text-wrap:balance}
 <ul class="pts">
 <li>提出 <strong>Temporal Mamba Proj</strong>：每个时间单元更新一个单向状态空间模型，让保留下来的视觉输出能携带前面被省略单元的信息，而不是简单丢帧。</li>
 <li>用空间池化与通道打包进一步压缩投影器宽度和输出 token 数，把 1,792 个原生视觉 token 降到 112 个。</li>
-<li>把「保留多少 token」变成推理期参数：同一个 checkpoint 通过 Temporal sample ratio 支持不同前缀预算。</li>
+<li>把「保留多少 token」变成推理期参数：同一个 checkpoint 通过推理期 stride 支持不同前缀预算。</li>
 </ul>
 </div>
 <div>
