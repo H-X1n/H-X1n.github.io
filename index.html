@@ -737,11 +737,11 @@ h1,h2,h3,h4{text-wrap:balance}
 </div>
 <div class="proj-more">
 <dl class="facts f2">
-<div><dt>数据</dt><dd>以 DeepSeek-V4-Flash 为 teacher，在模拟器中真实执行并采集 2,498 条轨迹；按终局结果严格验收后保留 1,026 条，选用 1,000 条（800 训练 / 200 验证），与 RL 训练集、评测集的 task_id 零重叠。</dd></div>
+<div><dt>数据</dt><dd>以 DeepSeek-V4.1-Flash 为 teacher，在模拟器中真实执行并采集 2,498 条轨迹；按终局结果严格验收后保留 1,026 条，选用 1,000 条（800 训练 / 200 验证），与 RL 训练集、评测集的 task_id 零重叠。</dd></div>
 <div><dt>LoRA SFT</dt><dd>对 Qwen3.5-2B 做 LoRA SFT，只在 assistant 动作 token 上计算 loss，屏蔽用户指令与环境观测。strict success 从 0% 提升到 60.5%，模型学会了合法的工具调用、多步搜索和正确终止。</dd></div>
 <div><dt>多轮在线 GRPO</dt><dd>在 veRL 0.8 上自研 AgentLoop 与工具适配层，从合并后的 SFT 模型出发做在线 GRPO：每题 rollout 4 条轨迹，8 个环境 worker 并行，单张 96GB GPU 平均约 110 s/步。第 100 步时 strict success 62.0%、买对率 62.5%，平均 reward 从 0.47 升到 0.52，主要减少了买错、循环和非法动作。</dd></div>
 <div><dt>Reward 设计</dt><dd>只在终局给分，结果确定、可复现。品类和预算是硬门槛，品牌 / 型号 / 核心功能 / 关键规格按 0.35 / 0.25 / 0.25 / 0.15 加权：命中目标商品得 1.0，买到完全满足需求的替代品得 0.55，部分满足最多 0.25；买错、提前放弃、重复循环、超出步数分别给不同的负分。证据不足的样本标为 <code>reward_valid=false</code>，不当作有效的 0 分。</dd></div>
-<div><dt>评测体系</dt><dd>用 DeepSeek-V4-Flash 从代码抽取的候选约束中选择并冻结 rubric，baseline / SFT / GRPO 三组共用，且不能新造约束字段；用 DeepSeek-V4-Pro 按搜索策略、候选利用、证据核验、决策质量、终止效率五个维度打 0/1/2 分，评审看不到 reward 和 gold 商品字段。结果分 reward、规则满足度、轨迹质量、效率四块报告，缺失和出错的题仍计入固定分母。</dd></div>
+<div><dt>评测体系</dt><dd>用 DeepSeek-V4.1-Flash 从代码抽取的候选约束中选择并冻结 rubric，baseline / SFT / GRPO 三组共用，且不能新造约束字段；用 DeepSeek-V4-Pro 按搜索策略、候选利用、证据核验、决策质量、终止效率五个维度打 0/1/2 分，评审看不到 reward 和 gold 商品字段。结果分 reward、规则满足度、轨迹质量、效率四块报告，缺失和出错的题仍计入固定分母。</dd></div>
 <div><dt>结果（Final-200 留出集）</dt><dd>strict success / 买对率 / 平均 reward：<br>Qwen3.5-2B 基线：0.0% / 0.0% / −0.1105<br>+ LoRA SFT：60.5% / 60.5% / 0.4729<br>+ GRPO（step 100）：62.0% / 62.5% / 0.5158<br>GRPO 取 500 步计划中的第 100 步；SFT 3 个 epoch 约 3 小时，GRPO 100 步约 3–4 小时。</dd></div>
 </dl>
 <div class="proj-foot"><ul class="chips"><li class="chip">Qwen3.5-2B</li><li class="chip">veRL</li><li class="chip">GRPO</li><li class="chip">LoRA SFT</li><li class="chip">vLLM</li><li class="chip">Ray</li><li class="chip">Rule-based Reward</li></ul></div>
