@@ -387,6 +387,7 @@ h1,h2,h3,h4{text-wrap:balance}
 .foot-in{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px 24px;padding-block:28px 34px;font-size:15px;font-weight:600}
 .foot .btn{--c:var(--yellow);box-shadow:3px 3px 0 var(--bg)}
 .foot .btn:hover{box-shadow:1px 1px 0 var(--bg)}
+.foot-stat b{color:var(--yellow);font-variant-numeric:tabular-nums}
 /* ---------- refinements ---------- */
 .hero-stats > li,.contact-grid > li{display:flex}
 .hero-stats .stat,.contact-grid .ccard{flex:1}
@@ -1095,6 +1096,7 @@ h1,h2,h3,h4{text-wrap:balance}
 <footer class="foot">
 <div class="wrap foot-in">
 <p>© 2026 黄鑫. All rights reserved.</p>
+<p class="foot-stat"><span id="vercount_container_site_uv" style="display:none">累计访客 <b id="vercount_value_site_uv"></b> 人</span><span id="vercount_container_site_pv" style="display:none"> · 访问 <b id="vercount_value_site_pv"></b> 次</span></p>
 <a class="btn btn-sm" href="#hero">回到顶部<svg class="i" aria-hidden="true"><use href="#i-up"/></svg></a>
 </div>
 </footer>
@@ -1126,5 +1128,7 @@ Object.keys(map).forEach(function(id){var s=d.getElementById(id);if(s)io.observe
 }
 })();
 </script>
+<!-- 访客统计（Vercount）：按浏览器去重计访客数，数据存在 vercount.one；编辑器里不会运行、不计数 -->
+<script defer src="https://events.vercount.one/js"></script>
 </body>
 </html>
