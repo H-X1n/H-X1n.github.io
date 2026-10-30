@@ -41,7 +41,13 @@ $$
 
 再写成 `(x1,y1),(x2,y2)` 形式的字符串，用 `<box></box>` 包起来；被指代的文字用 `<ref></ref>` 标出，图片特征前后加 `<img></img>`。这样不需要额外的坐标词表，语言模型直接「说出」框的位置。
 
+![Qwen-VL 的定位示例](images/qwenvl-grounding.jpg)
+*Qwen-VL 的定位示例。图源：[Qwen-VL 模型卡](https://huggingface.co/Qwen/Qwen-VL)*
+
 训练分三步：先在 224×224 分辨率上用 14 亿对图文数据（从 50 亿对清洗而来，77.3% 英文、22.7% 中文）预训练，冻结语言模型，只训练视觉编码器和适配器；再把分辨率提到 448×448，解冻全部参数做多任务预训练；最后冻结视觉编码器做指令微调，得到 Qwen-VL-Chat。
+
+![Qwen-VL 的三阶段训练](images/qwenvl-pipeline.png)
+*Qwen-VL 的三阶段训练，雪花表示冻结，火焰表示参与训练。图源：[Qwen-VL 论文](https://arxiv.org/abs/2308.12966)图 3*
 
 这一代的瓶颈也很明显：一页 A4 文档缩到 448 像素，小字就看不清了；每张图固定 256 个 token，信息多的图不够用，信息少的图又浪费。
 
@@ -57,7 +63,12 @@ $$
 N_{\text{img}}=\frac{H}{28}\times\frac{W}{28}
 $$
 
-（$H$、$W$ 先调整为 28 的倍数。）一张 224×224 的图是 64 个 token，加上 `<|vision_start|>`、`<|vision_end|>` 共 66 个；一张 1092×8204 的长文档是 $39\times293=11427$ 个。默认每张图 4～16384 个 token，可以用 `min_pixels`、`max_pixels` 按显存和速度调整：
+（$H$、$W$ 先调整为 28 的倍数。）一张 224×224 的图是 64 个 token，加上 `<|vision_start|>`、`<|vision_end|>` 共 66 个；一张 1092×8204 的长文档是 $39\times293=11427$ 个。下面的官方结构图里，同一个视觉编码器直接处理长图、224×28 的公式截图、1260×700 的照片和一段视频，分别得到 11427、8、1125 和 2208 个 token：
+
+![Qwen2-VL 的整体结构](images/qwen2vl-arch.jpg)
+*Qwen2-VL 的整体结构。图源：[Qwen2-VL 模型卡](https://huggingface.co/Qwen/Qwen2-VL-7B-Instruct)*
+
+默认每张图 4～16384 个 token，可以用 `min_pixels`、`max_pixels` 按显存和速度调整：
 
 ```python
 from transformers import AutoProcessor
@@ -81,8 +92,6 @@ processor = AutoProcessor.from_pretrained(
 | 固定 | 3136 | 77.27 | 786 |
 | 动态 | 1924 | 75.89 | 866 |
 
-![视觉信息进入语言模型的方式：从交叉注意力压缩，到 MLP 合并，再到 DeepStack](images/arch.png)
-
 ### 2.2 M-RoPE：每个 token 有三个位置编号
 
 普通的 [RoPE](https://arxiv.org/abs/2104.09864) 只有一维位置 $m$，第 $j$ 组频率的旋转角为
@@ -97,15 +106,16 @@ $$
 \phi_j = p^{(a_j)}\,\theta_j,\qquad a_j\in\{t,h,w\}
 $$
 
-编号规则见下图 a：文本的三个编号相同，等价于普通 RoPE；图片的 $t$ 固定，$h$、$w$ 按行列递增；视频每帧递增 $t$；后一段内容从前一段的最大编号加 1 开始。这样图片的编号只增长到行数、列数的量级，而不是 token 总数，推理时更容易外推到更长的序列。
+编号规则：文本的三个编号相同，等价于普通 RoPE；图片的 $t$ 固定，$h$、$w$ 按行列递增；视频每帧递增 $t$；后一段内容从前一段的最大编号加 1 开始。下图是论文里的例子：视频有 3 帧，每帧 3×4 个 token，后面的文本从 4 开始编号。这样图片和视频的编号只增长到帧数、行数、列数的量级，而不是 token 总数，推理时更容易外推到更长的序列。
+
+![M-RoPE 的位置编号](images/qwen2vl-mrope.png)
+*M-RoPE 给视频和文本分配的位置编号。图源：[Qwen2-VL 模型卡](https://huggingface.co/Qwen/Qwen2-VL-7B-Instruct)*
 
 在 Qwen2-VL-7B 的配置里，`mrope_section = [16, 24, 24]`，head_dim 为 128，共 64 组频率按块分给三个轴：
 
 $$
 a_j=\begin{cases}t, & 0\le j<16\\ h, & 16\le j<40\\ w, & 40\le j<64\end{cases}
 $$
-
-![M-RoPE 的位置编号（a）与频率分配方式（b）](images/mrope.png)
 
 论文的消融实验里，把 1D-RoPE 换成 M-RoPE 后，MathVista 从 39.2 提到 43.4，视频问答 NextQA 从 43.9 提到 46.0。
 
@@ -116,6 +126,11 @@ $$
 ## 3. Qwen2.5-VL（2025.01）：更快的编码器、绝对时间、能动手
 
 [Qwen2.5-VL](https://arxiv.org/abs/2502.13923) 于 2025 年 1 月 28 日发布 3B、7B、72B，2 月 20 日发布技术报告，3 月 25 日补充了 32B。
+
+下图是官方的结构图：右侧是重新设计的 ViT，大部分层只做窗口注意力；中间展示了视频的动态帧率采样，以及按绝对时间对齐的 MRoPE 时间编号。下面分别说明。
+
+![Qwen2.5-VL 的整体结构](images/qwen25vl-arch.jpg)
+*Qwen2.5-VL 的整体结构。图源：[Qwen2.5-VL 模型卡](https://huggingface.co/Qwen/Qwen2.5-VL-7B-Instruct)*
 
 ### 3.1 ViT 改用窗口注意力
 
@@ -147,6 +162,11 @@ $$
 ## 4. Qwen3-VL（2025.09）：多层融合与 256K 上下文
 
 Qwen3-VL 的旗舰 235B-A22B 于 2025 年 9 月 23 日发布，之后陆续发布 30B-A3B、4B、8B、2B、32B，每个尺寸都有 Instruct 和 Thinking 两个版本，[技术报告](https://arxiv.org/abs/2511.21631)于 11 月公开。语言模型基于 Qwen3，原生支持 256K 上下文，可扩展到 1M。
+
+下图是官方的结构图：右侧虚线框是 DeepStack，视觉编码器中间层的特征被送进语言模型的前几层；视频帧之间插入了 `<0.0 seconds>` 这样的文本时间戳。
+
+![Qwen3-VL 的整体结构](images/qwen3vl-arch.jpg)
+*Qwen3-VL 的整体结构。图源：[Qwen3-VL 模型卡](https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct)*
 
 ### 4.1 视觉编码器换成 SigLIP-2
 
@@ -206,9 +226,10 @@ Qwen2.5-VL 让编号对齐绝对时间，带来两个问题：长视频的时间
 
 训练系统上，官方博客介绍了把视觉和语言两部分的并行策略解耦，在图文视频混合数据上做到接近纯文本训练的吞吐。
 
-![Qwen3.5 与 Qwen3-VL 的视觉基准对比](images/bench.png)
+![Qwen3.5 中等尺寸模型的视觉基准成绩](images/qwen35-bench.png)
+*Qwen3.5 中等尺寸模型与 Qwen3-VL-235B-A22B 等模型的对比，节选视觉部分。图源：[Qwen3.5-27B 模型卡](https://huggingface.co/Qwen/Qwen3.5-27B)*
 
-效果上，稠密的 Qwen3.5-27B 在 MMMU（82.3 对 80.6）、MathVision（86.0 对 74.6）等视觉基准上已经超过上一代旗舰 Qwen3-VL-235B-A22B。
+效果上，稠密的 Qwen3.5-27B 已经超过上一代旗舰 Qwen3-VL-235B-A22B：上图中 MMMU-Pro 是 75.0 对 69.3，OmniDocBench v1.5 是 88.9 对 84.5；模型卡的表格里，MathVision 是 86.0 对 74.6。
 
 之后的版本延续了这条路线：2026 年 8 月的 Qwen3.8-Max 直接接收文本、图像和视频输入（见 [Roboflow 的评测](https://roboflow.com/blog/qwen3-8-max)）；9 月的 [Qwen3.8-Omni](https://arxiv.org/abs/2609.25611) 又把音频和空间音频统一进同一个 token 序列。
 
@@ -244,4 +265,4 @@ Qwen2.5-VL 让编号对齐绝对时间，带来两个问题：长视频的时间
 13. Qwen Team. [Qwen3.8-Omni: Towards Native Omni-Modal Agents](https://arxiv.org/abs/2609.25611). 2026.
 14. Roboflow. [Qwen3.8-Max for Vision: Benchmarks, Strengths, and Real-World Tests](https://roboflow.com/blog/qwen3-8-max). 2026.
 
-文中的插图均为本文绘制，数据和配置来自以上资料。
+封面和时间线为本文绘制；其余插图来自 Qwen 团队的论文和 Hugging Face 模型卡，版权归原作者所有。
