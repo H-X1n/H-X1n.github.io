@@ -83,5 +83,6 @@ main{flex:1}
 .post{width:100%;margin:0 0 40px;border-inline:0;box-shadow:none}
 .post-body{font-size:16.5px;line-height:1.8}
 .post-body pre{margin-inline:calc(-1*clamp(22px,4.4vw,56px));border-inline:0;box-shadow:none}
+.post-body th,.post-body td{word-break:keep-all}
 }
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{transition-duration:0s!important}}

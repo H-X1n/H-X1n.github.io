@@ -1,1 +1,10 @@
-[]
+[
+  {
+    "slug": "qwen-vl-roadmap",
+    "title": "Qwen-VL 的发展路线：从 448 像素到原生多模态",
+    "date": "2026-10-30",
+    "cover": "images/cover.png",
+    "coverW": 1600,
+    "coverH": 900
+  }
+]
