@@ -388,6 +388,17 @@ h1,h2,h3,h4{text-wrap:balance}
 .foot .btn{--c:var(--yellow);box-shadow:3px 3px 0 var(--bg)}
 .foot .btn:hover{box-shadow:1px 1px 0 var(--bg)}
 .foot-stat b{color:var(--yellow);font-variant-numeric:tabular-nums}
+/* ---------- blog：卡片由 /admin/blog.html 发布文章时生成，只显示封面和标题 ---------- */
+#blog{--accent:var(--green)}
+.blog-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:clamp(24px,3vw,36px)}
+.blog-grid > li{display:flex}
+.bcard{flex:1;display:flex;flex-direction:column;background:var(--paper);border:var(--line);box-shadow:var(--sh);text-decoration:none;transition:transform .15s,box-shadow .15s}
+.bcard:hover{transform:translate(calc(var(--px)*-1),calc(var(--px)*-1));box-shadow:9px 9px 0 var(--ink)}
+.bcard-cover{position:relative;display:grid;place-items:center;aspect-ratio:16/9;overflow:hidden;background-color:var(--c);background-image:radial-gradient(rgba(10,10,10,.2) 1.5px,transparent 1.7px);background-size:18px 18px;border-bottom:var(--line)}
+.bcard-cover img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.bcard-ph{font-size:clamp(56px,7vw,84px);font-weight:700;line-height:1}
+.bcard-title{padding:16px 20px 20px;font-size:clamp(19px,1.7vw,22px);font-weight:600;line-height:1.4;overflow-wrap:anywhere}
+.bcard:hover .bcard-title{text-decoration:underline;text-decoration-thickness:3px;text-decoration-color:var(--accent)}
 /* ---------- refinements ---------- */
 .hero-stats > li,.contact-grid > li{display:flex}
 .hero-stats .stat,.contact-grid .ccard{flex:1}
@@ -437,6 +448,7 @@ h1,h2,h3,h4{text-wrap:balance}
 <li><a href="#competitions">竞赛</a></li>
 <li><a href="#publications">论文</a></li>
 <li><a href="#education">教育</a></li>
+<li data-blog="nav" hidden><a href="#blog">博客</a></li>
 <li><a href="#contact">联系</a></li>
 </ul>
 </nav>
@@ -1061,6 +1073,21 @@ h1,h2,h3,h4{text-wrap:balance}
 </div>
 </article>
 </div>
+</div>
+</section>
+
+<!-- ===== BLOG ===== -->
+<section id="blog" class="sec" aria-labelledby="blog-title" hidden>
+<div class="wrap">
+<header class="sec-head">
+<p class="sec-label"><span>08</span><span>Blog</span></p>
+<h2 id="blog-title" class="sec-title">博客<span class="hl">文章</span></h2>
+<p class="sec-lead">写下的笔记与思考，点开卡片阅读全文。</p>
+</header>
+<ul class="blog-grid" data-blog="list">
+<!-- blog:start 以下卡片由 /admin/blog.html 发布文章时自动生成 -->
+<!-- blog:end -->
+</ul>
 </div>
 </section>
 

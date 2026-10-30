@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://api.github.com; frame-src 'self'; base-uri 'self'; form-action 'none'">
+<title>博客编辑器 · 黄鑫</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='3' y='3' width='58' height='58' fill='%234ADE80' stroke='%230A0A0A' stroke-width='6'/%3E%3Ctext x='32' y='43' font-family='Arial,sans-serif' font-weight='700' font-size='28' text-anchor='middle' fill='%230A0A0A'%3EHX%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="editor.css">
+<link rel="stylesheet" href="blog.css">
+</head>
+<body>
+<header class="bar">
+<div class="brand"><span class="mark" aria-hidden="true">HX</span><b>博客编辑器</b></div>
+<span class="status" id="status" role="status">正在加载…</span>
+<div class="tools">
+<button type="button" class="btn" id="btn-back" hidden>← 文章列表</button>
+<a class="btn" id="btn-view" href="/" target="_blank" rel="noopener" hidden>查看文章</a>
+<a class="btn" id="btn-site" href="./">网站编辑器</a>
+<button type="button" class="btn" id="btn-account">登录</button>
+<button type="button" class="btn primary" id="btn-publish" hidden disabled>发布</button>
+</div>
+</header>
+
+<main class="list-view" id="list-view">
+<div class="list-head"><h1>博客文章</h1><button type="button" class="btn primary" id="btn-new">写新文章</button></div>
+<p class="note list-note" id="list-note"></p>
+<ul class="post-list" id="post-list"></ul>
+</main>
+
+<main class="edit-view" id="edit-view" hidden>
+<div class="meta">
+<label class="field f-title">标题<input id="f-title" maxlength="120" placeholder="文章标题" autocomplete="off"></label>
+<label class="field f-date">日期<input type="date" id="f-date"></label>
+<label class="field f-slug">链接名<span class="slug"><span class="slug-fix">/blog/</span><input id="f-slug" maxlength="60" spellcheck="false" autocomplete="off" autocapitalize="off" placeholder="my-first-post"><span class="slug-fix">/</span></span></label>
+<div class="field f-cover"><span>封面图</span><span class="cover-row"><img id="cover-thumb" alt="封面预览" hidden><button type="button" class="btn sm yellow" id="btn-cover">选择封面</button><button type="button" class="btn sm" id="btn-cover-del" hidden>移除</button></span></div>
+</div>
+<div class="toolbar" id="toolbar" role="toolbar" aria-label="插入 Markdown">
+<button type="button" class="btn sm" data-md="h2" title="二级标题">标题</button>
+<button type="button" class="btn sm" data-md="bold" title="粗体"><b>B</b></button>
+<button type="button" class="btn sm" data-md="italic" title="斜体"><i>I</i></button>
+<button type="button" class="btn sm" data-md="link">链接</button>
+<button type="button" class="btn sm yellow" data-md="image">图片</button>
+<button type="button" class="btn sm" data-md="inline-math" title="行内公式 $…$">行内公式</button>
+<button type="button" class="btn sm" data-md="math" title="独立公式 $$…$$">公式块</button>
+<button type="button" class="btn sm" data-md="code">代码块</button>
+<button type="button" class="btn sm" data-md="quote">引用</button>
+<button type="button" class="btn sm" data-md="ul">列表</button>
+<button type="button" class="btn sm" data-md="ol">编号</button>
+<button type="button" class="btn sm" data-md="table">表格</button>
+<button type="button" class="btn sm" data-md="hr">分割线</button>
+</div>
+<div class="tabs" role="tablist" aria-label="编辑或预览"><button type="button" role="tab" data-tab="edit" aria-selected="true">编辑</button><button type="button" role="tab" data-tab="preview" aria-selected="false">预览</button></div>
+<div class="panes" id="panes" data-tab="edit">
+<textarea id="md" spellcheck="false" aria-label="正文（Markdown）" placeholder="用 Markdown 写正文。&#10;公式：行内 $E=mc^2$，独立一行用 $$ … $$&#10;图片：点上面的「图片」，或直接粘贴、拖进来"></textarea>
+<iframe id="preview" title="文章预览" sandbox="allow-same-origin"></iframe>
+</div>
+<div class="foot-note"><span id="draft-note">草稿会自动保存在这台设备上</span><span class="hide-sm">Ctrl / ⌘ + S 发布</span><button type="button" class="btn sm danger" id="btn-delete" hidden>删除这篇文章</button></div>
+</main>
+
+<div class="modal" id="login" role="dialog" aria-modal="true" aria-labelledby="login-title" hidden>
+<div class="card">
+<div class="card-head"><h2 id="login-title">连接 GitHub</h2></div>
+<div class="card-body">
+<p>和网站编辑器共用同一个 token（在任一编辑器登录过，这里会自动连接）。需要只授权 <b>H-X1n/H-X1n.github.io</b> 的 token：</p>
+<ol>
+<li><a href="https://github.com/settings/personal-access-tokens/new?name=HX+site+editor&amp;description=Edit+h-x1n.github.io+from+the+admin+page&amp;expires_in=90&amp;contents=write" target="_blank" rel="noopener noreferrer">打开 GitHub 创建 token 页面</a>（已预填名称、90 天有效期和 Contents 读写权限）</li>
+<li>Repository access 选 <b>Only select repositories</b>，勾选 <b>H-X1n.github.io</b></li>
+<li>复制 <code>github_pat_</code> 开头的 token，粘贴到下面</li>
+</ol>
+<label class="field">Token<input type="password" id="token-input" autocomplete="off" spellcheck="false" placeholder="github_pat_…"></label>
+<label class="check"><input type="checkbox" id="token-remember" checked>在这台设备上记住（公共电脑请取消勾选）</label>
+<p class="note">token 只保存在当前浏览器里，只会发给 api.github.com。</p>
+<p class="err" id="login-error" hidden></p>
+</div>
+<div class="card-foot">
+<button type="button" class="btn danger" id="login-logout" hidden>退出登录</button>
+<button type="button" class="btn" id="login-skip">先不登录</button>
+<button type="button" class="btn primary" id="login-ok">连接</button>
+</div>
+</div>
+</div>
+
+<div class="modal" id="pub" role="dialog" aria-modal="true" aria-labelledby="pub-title" hidden>
+<div class="card">
+<div class="card-head"><h2 id="pub-title">发布文章</h2></div>
+<div class="card-body">
+<p>以下文件会作为<b>一次提交</b>推送到 <b id="pub-branch">master</b> 分支，GitHub Pages 通常 1 分钟内更新：</p>
+<ul class="changes" id="pub-list"></ul>
+<label class="field">提交说明<input type="text" id="pub-msg" maxlength="200"></label>
+<p class="err" id="pub-error" hidden></p>
+</div>
+<div class="card-foot">
+<button type="button" class="btn" id="pub-cancel">取消</button>
+<button type="button" class="btn primary" id="pub-ok">确认发布</button>
+</div>
+</div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<input type="file" id="file-input" hidden>
+<script src="../assets/vendor/marked.umd.js"></script>
+<script src="../assets/vendor/purify.min.js"></script>
+<script src="../assets/vendor/katex/katex.min.js"></script>
+<script src="blog.js"></script>
+</body>
+</html>

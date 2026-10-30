@@ -236,7 +236,7 @@
   /* ---------- 文字编辑 ---------- */
   function isTextBlock(el) {
     if (!el || el.nodeType !== 1 || !el.textContent.trim()) return false;
-    if (el.closest('svg, script, style, [data-hx-ui], ' + DUP_MARQUEE)) return false;
+    if (el.closest('svg, script, style, [data-hx-ui], [data-blog="list"], ' + DUP_MARQUEE)) return false;
     var all = el.getElementsByTagName('*');
     for (var i = 0; i < all.length; i++) if (!INLINE.test(all[i].tagName)) return false;
     return true;
@@ -345,6 +345,8 @@
       return;
     }
     if (t.closest && t.closest(DUP_MARQUEE)) { e.preventDefault(); toast('这一组是自动生成的副本，请修改它前面那一组'); return; }
+    // 博客卡片由博客编辑器根据文章列表生成，在这里改了也会在下次发布文章时被覆盖
+    if (t.closest && t.closest('[data-blog="list"]')) { e.preventDefault(); finishEditing(); select(null); toast('博客卡片由「博客」编辑器自动生成，请到那里新增、修改或删除文章'); return; }
     finishEditing();
     var img = t.closest && t.closest('img');
     if (img) { e.preventDefault(); select(img); return; }
@@ -382,6 +384,7 @@
   function onHover(e) {
     var t = e.target;
     var el = t.closest ? (t.closest('img') || pickEditable(t) || t.closest('a')) : null;
+    if (el && el.closest('[data-blog="list"]')) el = null;
     if (el === S.hover) return;
     if (S.hover) S.hover.removeAttribute('data-hx-hover');
     S.hover = el;
