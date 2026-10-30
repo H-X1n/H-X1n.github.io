@@ -244,9 +244,6 @@ Qwen2.5-VL 让编号对齐绝对时间，带来两个问题：长视频的时间
 
 连接视觉和语言的模块整体在变简单：从带 256 个查询的交叉注意力，到两层 MLP；Qwen3-VL 加入的 DeepStack 在 Qwen3.5 里也被去掉，两种模态的对齐更多靠大规模的早期融合训练完成。视觉逐渐从「接在语言模型上的模块」变成模型本来就有的一种输入。
 
-## 7. 写在最后
-
-这几代模型我在项目里都用过：在咪咕做流式足球视频理解时，基座是 Qwen2.5-VL-7B，原生每 32 帧有 1,792 个视觉 token，直播场景下上下文增长很快，我自己做了一个因果时序投影器，把它压到 56 个；在百度做长视频切片的向量表征时，用的是 Qwen3-VL-Embedding-8B；个人的购物 Agent 后训练项目，则在 Qwen3.5-2B 上做 LoRA SFT 和多轮在线 GRPO。回头看，视觉 token 的数量和位置编码，始终是工程上最先碰到的问题，也正是每一代 Qwen-VL 都在改进的地方。
 
 ## 参考资料
 
@@ -264,5 +261,3 @@ Qwen2.5-VL 让编号对齐绝对时间，带来两个问题：长视频的时间
 12. Tschannen et al. [SigLIP 2: Multilingual Vision-Language Encoders with Improved Semantic Understanding, Localization, and Dense Features](https://arxiv.org/abs/2502.14786). 2025.
 13. Qwen Team. [Qwen3.8-Omni: Towards Native Omni-Modal Agents](https://arxiv.org/abs/2609.25611). 2026.
 14. Roboflow. [Qwen3.8-Max for Vision: Benchmarks, Strengths, and Real-World Tests](https://roboflow.com/blog/qwen3-8-max). 2026.
-
-封面和时间线为本文绘制；其余插图来自 Qwen 团队的论文和 Hugging Face 模型卡，版权归原作者所有。
