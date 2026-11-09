@@ -696,7 +696,7 @@ h1,h2,h3,h4{text-wrap:balance}
 <header class="sec-head">
 <p class="sec-label"><span>04</span><span>Projects</span></p>
 <h2 id="projects-title" class="sec-title">核心<span class="hl">项目</span></h2>
-<p class="sec-lead">四个核心 AI 项目：流式足球视频 Caption、中文购物 Agent 的 SFT + GRPO 后训练、从零实现的 Transformer 翻译，以及多 Agent 求职辅助工作流。</p>
+<p class="sec-lead">四个核心 AI 项目：流式足球视频 Caption、中文购物 Agent 后训练（SFT、GRPO 与 On-Policy 蒸馏）、从零实现的 Transformer 翻译，以及多 Agent 求职辅助工作流。</p>
 </header>
 <div class="proj-list">
 <article id="p-soccer" class="proj c-g t-y">
@@ -732,31 +732,33 @@ h1,h2,h3,h4{text-wrap:balance}
 <article id="p-shopagent" class="proj rev c-p t-g">
 <div class="proj-media">
 <figure class="browser mw-560">
-<div class="browser-bar" aria-hidden="true"><i></i><i></i><i></i><span class="browser-url">shopsimulator · lora sft → grpo</span></div>
-<img src="assets/shopagent-results.png" alt="购物 Agent 后训练结果：200 题留出集上 strict success 从基线 0% 到 LoRA SFT 60.5%、在线 GRPO 62.0%，平均 reward 从 −0.11 到 0.47、0.52；下方为 teacher 轨迹采集、终局验收、LoRA SFT、多轮在线 GRPO 的流程" width="560" height="420" loading="lazy" decoding="async">
+<div class="browser-bar" aria-hidden="true"><i></i><i></i><i></i><span class="browser-url">shopsimulator · sft → grpo → on-policy distill</span></div>
+<img src="assets/shopagent-distill.png" alt="购物 Agent 后训练结果：200 题留出集上的 strict success，Qwen3.5-2B 基座 1.0%，LoRA SFT 69.0%，SFT 后做 GRPO 70.5%（不显著），SFT 后做 on-policy 蒸馏 79.5%（较 SFT +10.5 个点，p=0.0001），27B 教师 84.5%；下方为蒸馏一步的流程：学生采样、教师逐 token 打分、按对数概率差计算优势、PPO 更新" width="560" height="420" loading="lazy" decoding="async">
 </figure>
 </div>
 <div class="proj-body">
 <div class="proj-kick"><span class="proj-no">PROJECT 02</span><span class="chip fill c-o">Agentic RL</span></div>
-<h3>长程中文购物 Agent 后训练：<wbr>LoRA SFT + 多轮在线 GRPO</h3>
-<p class="proj-desc">基于 ShopSimulator v2.1 搭建中文购物 Agent 的后训练与评测流水线：Qwen3.5-2B 先做 LoRA SFT，再用 veRL 做多轮在线 GRPO。在 200 题留出集上，strict success 从 0% 提升到 62.0%，平均 reward 从 −0.11 提升到 0.52。训练用终局规则 reward，不用 LLM-as-Judge；评测由代码硬校验和双 LLM 评审组成。</p>
+<h3>长程中文购物 Agent 后训练：<wbr>LoRA SFT、多轮 GRPO 与 On-Policy 蒸馏</h3>
+<p class="proj-desc">基于 ShopSimulator v2.1 搭建中文购物 Agent 的后训练与评测流水线。Qwen3.5-2B 经 LoRA SFT 后，200 题留出集上的 strict success 从 1.0% 升到 69.0%；继续做多轮 GRPO 只到 70.5%，与 SFT 的差异不显著。随后用同一配方训练 Qwen3.8-27B 作教师（84.5%），对 2B 学生做 token 级 on-policy 蒸馏，strict success 升到 79.5%，较 SFT 提升 10.5 个点（p=0.0001）。</p>
 <ul class="metrics" aria-label="关键指标">
-<li class="metric"><b>62.0%</b><span>strict success（基线 0%）</span></li>
-<li class="metric"><b>0.52</b><span>平均 reward（基线 −0.11）</span></li>
-<li class="metric"><b>1,000</b><span>条验收轨迹做 SFT</span></li>
-<li class="metric"><b>1 张</b><span>96GB GPU，约 110 s/步</span></li>
+<li class="metric"><b>79.5%</b><span>strict success（SFT 69.0%）</span></li>
+<li class="metric"><b>+10.5 pp</b><span>蒸馏较 SFT，p=0.0001</span></li>
+<li class="metric"><b>11 → 0</b><span>买错的题（共 200 题）</span></li>
+<li class="metric"><b>27B → 2B</b><span>教师 strict success 84.5%</span></li>
 </ul>
 </div>
 <div class="proj-more">
 <dl class="facts f2">
-<div><dt>数据</dt><dd>以 DeepSeek-V4.1-Flash 为 teacher，在模拟器中真实执行并采集 2,498 条轨迹；按终局结果严格验收后保留 1,026 条，选用 1,000 条（800 训练 / 200 验证），与 RL 训练集、评测集的 task_id 零重叠。</dd></div>
-<div><dt>LoRA SFT</dt><dd>对 Qwen3.5-2B 做 LoRA SFT，只在 assistant 动作 token 上计算 loss，屏蔽用户指令与环境观测。strict success 从 0% 提升到 60.5%，模型学会了合法的工具调用、多步搜索和正确终止。</dd></div>
-<div><dt>多轮在线 GRPO</dt><dd>在 veRL 0.8 上自研 AgentLoop 与工具适配层，从合并后的 SFT 模型出发做在线 GRPO：每题 rollout 4 条轨迹，8 个环境 worker 并行，单张 96GB GPU 平均约 110 s/步。第 100 步时 strict success 62.0%、买对率 62.5%，平均 reward 从 0.47 升到 0.52，主要减少了买错、循环和非法动作。</dd></div>
-<div><dt>Reward 设计</dt><dd>只在终局给分，结果确定、可复现。品类和预算是硬门槛，品牌 / 型号 / 核心功能 / 关键规格按 0.35 / 0.25 / 0.25 / 0.15 加权：命中目标商品得 1.0，买到完全满足需求的替代品得 0.55，部分满足最多 0.25；买错、提前放弃、重复循环、超出步数分别给不同的负分。证据不足的样本标为 <code>reward_valid=false</code>，不当作有效的 0 分。</dd></div>
-<div><dt>评测体系</dt><dd>用 DeepSeek-V4.1-Flash 从代码抽取的候选约束中选择并冻结 rubric，baseline / SFT / GRPO 三组共用，且不能新造约束字段；用 DeepSeek-V4-Pro 按搜索策略、候选利用、证据核验、决策质量、终止效率五个维度打 0/1/2 分，评审看不到 reward 和 gold 商品字段。结果分 reward、规则满足度、轨迹质量、效率四块报告，缺失和出错的题仍计入固定分母。</dd></div>
-<div><dt>结果（Final-200 留出集）</dt><dd>strict success / 买对率 / 平均 reward：<br>Qwen3.5-2B 基线：0.0% / 0.0% / −0.1105<br>+ LoRA SFT：60.5% / 60.5% / 0.4729<br>+ GRPO（step 100）：62.0% / 62.5% / 0.5158<br>GRPO 取 500 步计划中的第 100 步；SFT 3 个 epoch 约 3 小时，GRPO 100 步约 3–4 小时。</dd></div>
+<div><dt>数据</dt><dd>以 DeepSeek-V4.1-Flash 为 teacher，在模拟器中真实执行并采集 2,498 条轨迹，按终局结果严格验收后保留 1,026 条，选用 1,000 条（800 训练 / 200 验证）。GRPO 与蒸馏共用另一个 1,000 题的 prompt 池；SFT、RL、评测各集合的 task_id 两两不相交。</dd></div>
+<div><dt>Reward 设计</dt><dd>只在终局给分，结果确定、可复现。品类和预算是硬门槛（不满足得 −0.85），品牌 / 型号 / 核心功能 / 关键规格按 0.35 / 0.25 / 0.25 / 0.15 加权：买到目标商品得 1.0，买到完全满足需求的替代品得 0.55，部分满足最多 0.25；提前放弃、超出步数、重复打转分别给不同的负分。strict success 只算买到目标商品；无法核验 reward 的样本标为 <code>reward_unverifiable</code>，计入分母。</dd></div>
+<div><dt>LoRA SFT</dt><dd>对 Qwen3.5-2B 做 LoRA SFT（r16 / α32），只在 assistant 动作 token 上计算 loss；lr 1e-4，3 个 epoch 共 300 步，单张 A800 约 3.9 小时。strict success 从 1.0% 升到 69.0%。基座的问题主要是格式与合法性：135 题因非法动作过多被终止，SFT 后只剩 2 题。</dd></div>
+<div><dt>多轮在线 GRPO</dt><dd>在 veRL 0.8 上自研 AgentLoop 与工具适配层，从 SFT 合并模型出发：每步 2 题 × 4 条轨迹，优势为奖励减组内均值，丢弃组内奖励全相同的组。step 450 的 strict success 为 70.5%，较 SFT +1.5 个点，不显著（p=0.55）。信号稀疏：784 次迭代中 42% 凑不出有效组而跳过更新，随后触发保护性早停。分块计算 log-prob 后，actor 峰值显存从 49–53 GiB 降到 20.5 GiB。</dd></div>
+<div><dt>27B 教师</dt><dd>同一配方迁移到 Qwen3.8-27B：零样本 70.0%；4 卡 FSDP 做 LoRA SFT 后 82.0%；再做多轮 GRPO（6 卡，每步 3 题 × 8 条轨迹），4 个 checkpoint 在 81.5%–84.5%，相对 SFT 都不显著。选 step 40（84.5%）作蒸馏教师，它是这 4 个 checkpoint 在评测集上的最高值。</dd></div>
+<div><dt>On-Policy 蒸馏</dt><dd>2B 学生按温度 1.0 采样完整的多轮轨迹（每步 16 题 × 8 条），27B 教师对其中每个 token 给出 log p；以 k1 = log p学生 − log p教师 构造逐 token 优势 A = −clip(k1, ±1)，按 PPO clip 0.2 更新，不用任务奖励。lr 1e-4 训练 500 步（学生、教师各 1 张 A800，约 78 小时）：strict success 79.5%，较 SFT +10.5 个点（25 题变好、4 题变差，p=0.0001）。lr 为 1e-6 时，5 个变体都停在 65.5%–69.5%。</dd></div>
+<div><dt>评测</dt><dd>所有模型用同一份 Final-200 留出集：贪心解码，最多 35 步、24,576 token 上下文，缺失和出错的题计入分母。两个模型在同一 200 题上逐题配对，用 McNemar 精确检验和配对 bootstrap 报告显著性与区间。同一份 SFT 权重重评为 67.0%（首次 69.0%），所以 3 个点以内的差别不作解读。导出 LoRA 后先合并 adapter 并校验权重确实改变，避免误评未合并的模型。</dd></div>
+<div><dt>结果（Final-200 留出集）</dt><dd>strict success / 平均 reward：<br>Qwen3.5-2B 基座：1.0% / −0.162<br>+ LoRA SFT：69.0% / 0.593<br>SFT → GRPO（step 450）：70.5% / 0.608<br>SFT → 蒸馏（step 500）：79.5% / 0.737<br>SFT → 蒸馏 + GRPO（λ=1，step 400）：79.0% / 0.728<br>Qwen3.8-27B：零样本 70.0% → SFT 82.0% → GRPO 84.5%<br>蒸馏把买错从 11 题降到 0、部分满足从 35 题降到 23 题；与教师仍差 5.0 个点（p=0.076），主要是重复打转（学生 17 题，教师 3 题）。再加 GRPO 任务奖励没有可检出的增益。全部结果为单 seed、单次评测。</dd></div>
 </dl>
-<div class="proj-foot"><ul class="chips"><li class="chip">Qwen3.5-2B</li><li class="chip">veRL</li><li class="chip">GRPO</li><li class="chip">LoRA SFT</li><li class="chip">vLLM</li><li class="chip">Ray</li><li class="chip">Rule-based Reward</li></ul></div>
+<div class="proj-foot"><ul class="chips"><li class="chip">Qwen3.5-2B</li><li class="chip">Qwen3.8-27B</li><li class="chip">veRL</li><li class="chip">GRPO</li><li class="chip">On-Policy 蒸馏</li><li class="chip">LoRA SFT</li><li class="chip">vLLM</li><li class="chip">Ray</li><li class="chip">FSDP</li><li class="chip">Rule-based Reward</li></ul></div>
 </div>
 </article>
 <article class="proj c-b t-p">
