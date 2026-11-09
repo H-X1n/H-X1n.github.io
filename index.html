@@ -742,8 +742,8 @@ h1,h2,h3,h4{text-wrap:balance}
 <p class="proj-desc">一次中文购物 Agent 的 RL 后训练探索：在 ShopSimulator v2.1 上以 Qwen3.5-2B 为学生，从 LoRA SFT 出发，依次尝试多轮 GRPO、On-Policy Distillation（OPD）以及两者联合训练，在 200 题测试集上比较每一步的提升。SFT 把 strict success 从 1.0% 提升到 69.0%；GRPO 再提升 1.5 个点，不显著；以 Qwen3.8-27B 为教师做 token 级 OPD，在 SFT 基础上提升 10.5 个点（p=0.0001），达到 79.5%；GRPO 与 OPD 联合训练为 80.0%，与 OPD 相当。</p>
 <ul class="metrics" aria-label="关键指标">
 <li class="metric"><b>69.0%</b><span>LoRA SFT：基座 1.0%</span></li>
-<li class="metric"><b>70.5%</b><span>SFT+GRPO：+1.5，不显著</span></li>
-<li class="metric"><b>79.5%</b><span>SFT+OPD：+10.5，p=0.0001</span></li>
+<li class="metric"><b>70.5%</b><span>SFT+GRPO：+1.5</span></li>
+<li class="metric"><b>79.5%</b><span>SFT+OPD：+10.5          </span></li>
 <li class="metric"><b>80.0%</b><span>SFT+GRPO+OPD：+11.0</span></li>
 </ul>
 </div>
@@ -754,9 +754,9 @@ h1,h2,h3,h4{text-wrap:balance}
 <div><dt>LoRA SFT</dt><dd>对 Qwen3.5-2B 做 LoRA SFT（r16 / α32），只在 assistant 动作 token 上计算 loss；lr 1e-4，3 个 epoch 共 300 步，单张 A800 约 3.9 小时。strict success 从 1.0% 升到 69.0%。基座的问题主要是格式与合法性：135 题因非法动作过多被终止，SFT 后只剩 2 题。</dd></div>
 <div><dt>多轮在线 GRPO</dt><dd>在 veRL 0.8 上自研 AgentLoop 与工具适配层，从 SFT 合并模型出发：lr 1e-4，每步 2 题 × 4 条轨迹，优势为奖励减组内均值，丢弃组内奖励全相同的组。strict success 为 70.5%，较 SFT +1.5 个点，不显著（p=0.55）。信号稀疏：784 次迭代中 42% 凑不出有效组而跳过更新。</dd></div>
 <div><dt>27B 教师</dt><dd>同一配方迁移到 Qwen3.8-27B：零样本 70.0%；4 卡 FSDP 做 LoRA SFT 后 82.0%；再做多轮 GRPO（6 卡，每步 3 题 × 8 条轨迹）后为 84.5%，相对 SFT 的提升不显著（p=0.0625），作为 OPD 的教师。</dd></div>
-<div><dt>OPD（On-Policy Distillation）</dt><dd>2B 学生按温度 1.0 采样完整的多轮轨迹（每步 16 题 × 8 条），27B 教师对其中每个 token 给出 log p；以 k1 = log p学生 − log p教师 构造逐 token 优势 A = −clip(k1, ±1)，按 PPO clip 0.2 更新，不使用任务奖励。lr 1e-4 训练 500 步（学生、教师各 1 张 A800，约 78 小时），strict success 79.5%，较 SFT +10.5 个点（25 题变好、4 题变差，p=0.0001）。SFT+GRPO+OPD 在同样设置下把 GRPO 任务奖励项与 OPD 项相加（λ=1）联合训练。</dd></div>
+<div><dt>OPD（On-Policy Distillation）</dt><dd>2B 学生按温度 1.0 采样完整的多轮轨迹（每步 16 题 × 8 条），27B 教师对其中每个 token 给出 log p；以 k1 = log p学生 − log p教师 构造逐 token 优势 A = −clip(k1, ±1)，按 PPO clip 0.2 更新，不使用任务奖励。lr 1e-4 训练 500 步，strict success 79.5%，较 SFT +10.5 个点（25 题变好、4 题变差，p=0.0001）。SFT+GRPO+OPD 在同样设置下把 GRPO 任务奖励项与 OPD 项相加（λ=1）联合训练。</dd></div>
 <div><dt>评测</dt><dd>所有模型用同一份 Final-200 测试集：贪心解码，最多 35 步、24,576 token 上下文，缺失和出错的题计入分母。三组实验都从同一个 SFT 模型出发，使用相同的评测协议。两个模型在同一 200 题上逐题配对，用 McNemar 精确检验计算 p 值。</dd></div>
-<div><dt>结果（Final-200 测试集）</dt><dd>strict success / 平均 reward：<br>Qwen3.5-2B 基座：1.0% / −0.162<br>+ LoRA SFT：69.0% / 0.593<br>SFT+GRPO：70.5% / 0.608<br>SFT+OPD：79.5% / 0.737<br>SFT+GRPO+OPD：80.0% / 0.742<br>Qwen3.8-27B：零样本 70.0% → SFT 82.0% → GRPO 84.5%<br>OPD 把买错从 11 题降到 0、部分满足从 35 题降到 23 题；与教师仍差 5.0 个点（p=0.076），主要是重复打转（学生 17 题，教师 3 题）。</dd></div>
+<div><dt>结果（Final-200 测试集）</dt><dd>strict success / 平均 reward：<br>Qwen3.5-2B 基座：<span class="hl" style="--hl: var(--blue);">1.0% / −0.162</span><br>+ LoRA SFT：<span class="hl" style="--hl: var(--yellow);">69.0% / 0.593</span><br>SFT+GRPO：<span class="hl" style="--hl: var(--yellow);">70.5% / 0.608</span><br>SFT+OPD：<span class="hl" style="--hl: var(--pink);">79.5% / 0.737</span><br>SFT+GRPO+OPD：<span class="hl" style="--hl: var(--pink);">80.0% / 0.742</span><br>Qwen3.8-27B：零样本 <span class="hl" style="--hl: var(--green);">70.0% → SFT 82.0% → GRPO 84.5%</span><br>OPD 把买错从 11 题降到 0、部分满足从 35 题降到 23 题；与教师仍差 5.0 个点（p=0.076），主要是重复打转（学生 17 题，教师 3 题）。</dd></div>
 </dl>
 <div class="proj-foot"><ul class="chips"><li class="chip">Qwen3.5-2B</li><li class="chip">Qwen3.8-27B</li><li class="chip">veRL</li><li class="chip">GRPO</li><li class="chip">OPD</li><li class="chip">LoRA SFT</li><li class="chip">vLLM</li><li class="chip">Ray</li><li class="chip">FSDP</li><li class="chip">Rule-based Reward</li></ul></div>
 </div>
