@@ -753,7 +753,7 @@ h1,h2,h3,h4{text-wrap:balance}
 </article>
 <article id="p-minionerec" class="proj rev c-o t-b">
 <div class="proj-media">
-<figure class="browser mw-560" role="img" aria-label="MiniOneRec 流程示意：商品标题与描述经 Sentence-BERT 编码、三层 RQ-VAE 量化，得到三位语义 ID；用户历史行为序列转成 SID token，经 Qwen2.5 多任务 SFT 与 GRPO 对齐后生成 Top-10 候选，碰撞数为 0，合法生成率 100%。">
+<figure class="browser mw-560" role="img" aria-label="MiniOneRec 流程示意：商品标题与描述经 Sentence-BERT 编码、三层 RQ-VAE 量化，得到三位语义 ID；用户历史行为序列转成 SID token，经 Qwen2.5-1.5B 多任务 SFT 与 GRPO 对齐后生成 Top-10 候选，碰撞数为 0，合法生成率 100%。">
 <div class="browser-bar" aria-hidden="true"><i></i><i></i><i></i><span class="browser-url">minionerec · sid → llm → grpo</span></div>
 <div class="sidfig-body">
 <div class="sidfig-band">
@@ -763,12 +763,12 @@ h1,h2,h3,h4{text-wrap:balance}
 <span class="sidfig-node">Sentence-BERT</span><span class="sidfig-arrow" aria-hidden="true">→</span>
 <span class="sidfig-node">RQ-VAE ×3</span>
 </div>
-<div class="sidfig-out"><span class="sidfig-node sidfig-sid"><small>SID</small>12 · 305 · 8814</span><span class="sidfig-cap">一一映射 · CC = 0</span></div>
+<div class="sidfig-out"><span class="sidfig-node sidfig-sid"><small>SID</small>236 · 231 · 226</span><span class="sidfig-cap">一一映射 · CC = 0</span></div>
 </div>
 <div class="sidfig-band">
 <p class="sidfig-k">② 微调与策略对齐</p>
 <div class="sidfig-row">
-<span class="sidfig-node sidfig-sft">Qwen2.5 + SID 词表</span><span class="sidfig-arrow" aria-hidden="true">→</span>
+<span class="sidfig-node sidfig-sft"><small>+ SID 词表</small>Qwen2.5-1.5B</span><span class="sidfig-arrow" aria-hidden="true">→</span>
 <span class="sidfig-node">多任务 SFT</span><span class="sidfig-arrow" aria-hidden="true">→</span>
 <span class="sidfig-node sidfig-rl">GRPO</span>
 </div>
@@ -790,7 +790,7 @@ h1,h2,h3,h4{text-wrap:balance}
 <div class="proj-body">
 <div class="proj-kick"><span class="proj-no">PROJECT 02</span><span class="chip fill c-o">生成式推荐</span></div>
 <h3>MiniOneRec：<wbr>基于<span class="nw">语义 ID</span>的<wbr>端到端生成式推荐</h3>
-<p class="proj-desc">传统序列推荐把商品学成独立的 ID 嵌入：ID 之间只靠共现建立关联，语义迁移不到新商品、新品类，换个场景就要重学。MiniOneRec 把推荐改写成生成——商品文本经 Sentence-BERT 编码、三层 RQ-VAE 量化成层次化语义 ID（SID），用户行为序列转成 SID token 后交给 Qwen2.5 做 next-token 预测，SFT 之后再用 GRPO 做推荐导向对齐。在 Amazon Industrial &amp; Scientific 上，相较 ID 类序列推荐基线，Recall@10 提升 15.2%、NDCG@10 提升 12.8%。</p>
+<p class="proj-desc">传统序列推荐把商品学成独立的 ID 嵌入：ID 之间只靠共现建立关联，语义迁移不到新商品、新品类，换个场景就要重学。MiniOneRec 把推荐改写成生成——商品文本经 Sentence-BERT 编码、三层 RQ-VAE 量化成层次化语义 ID（SID），用户行为序列转成 SID token 后交给 Qwen2.5-1.5B-Instruct 做 next-token 预测，SFT 之后再用 GRPO 做推荐导向对齐。在 Amazon Industrial &amp; Scientific 上，相较 ID 类序列推荐基线，Recall@10 提升 15.2%、NDCG@10 提升 12.8%。</p>
 <ul class="metrics" aria-label="关键指标">
 <li class="metric"><b>15.2%</b><span>Recall@10</span></li>
 <li class="metric"><b>12.8%</b><span>NDCG@10</span></li>
@@ -803,11 +803,11 @@ h1,h2,h3,h4{text-wrap:balance}
 <div><dt>背景与动机</dt><dd>传统推荐依赖独立商品 ID 嵌入：ID 之间只靠共现关联，语义知识迁移不出去，新商品、新品类、跨场景都要重新学。MiniOneRec 把「召回 + 排序」统一成「由行为序列生成下一个商品的 SID」，商品语义常驻词表，模型直接学「什么样的行为后面该接什么商品」。</dd></div>
 <div><dt>语义 ID 体系</dt><dd>用 Sentence-BERT 对商品标题与描述做联合语义编码，再用三层残差量化 VAE（RQ-VAE）逐层量化残差，得到三位层次化 SID（粗粒度类目 → 细粒度属性）；相同前缀天然表达「同类商品」，词表规模也可控。</dd></div>
 <div><dt>碰撞与合法生成</dt><dd>量化会把不同商品映射到同一个 SID。通过迭代去重重新分配冲突码字，并在推理端配合约束解码，实现 SID 与商品一一映射：碰撞数 CC=0，合法生成率 100%，不会输出词表外的无效候选。</dd></div>
-<div><dt>多任务 SFT</dt><dd>以 Qwen2.5 为基座扩展 SID 专用词表，把用户历史交互序列转成 SID token；联合训练「自回归 next-token 推荐」与「SID 语义对齐」两个目标，让生成的 SID 既符合行为分布、又保持语义一致。基于 DeepSpeed ZeRO-2 在 8×A100 上训练，单卡显存开销明显下降。</dd></div>
+<div><dt>多任务 SFT</dt><dd>以 Qwen2.5-1.5B-Instruct 为基座扩展 SID 专用词表（三级层次化 token），把用户历史交互序列转成 SID token；联合训练「自回归 next-token 推荐」与「SID 语义对齐」两个目标，让生成的 SID 既符合行为分布、又保持语义一致。基于 DeepSpeed ZeRO-2 在 8×A100 上做数据并行训练，大批量吞吐下保持单卡显存可控。</dd></div>
 <div><dt>GRPO 对齐</dt><dd>SFT 之后用 GRPO 做推荐导向的策略优化，奖励由「命中正确性」与「排序感知」两部分复合；解码阶段用约束束搜索，保证候选合法、不重复，进一步提升排序精度。</dd></div>
 <div><dt>实验结果</dt><dd>在 Amazon Industrial &amp; Scientific 公开数据集上，与 ID 类序列推荐基线相比，Recall@10 提升 15.2%、NDCG@10 提升 12.8%，验证了「语义 ID + 生成式」范式在公开数据上的效果优势。</dd></div>
 </dl>
-<div class="proj-foot"><ul class="chips"><li class="chip">Sentence-BERT</li><li class="chip">RQ-VAE</li><li class="chip">语义 ID</li><li class="chip">Qwen2.5</li><li class="chip">DeepSpeed ZeRO-2</li><li class="chip">GRPO</li><li class="chip">约束束搜索</li><li class="chip">PyTorch</li></ul></div>
+<div class="proj-foot"><ul class="chips"><li class="chip">Sentence-BERT</li><li class="chip">RQ-VAE</li><li class="chip">语义 ID</li><li class="chip">Qwen2.5-1.5B-Instruct</li><li class="chip">DeepSpeed ZeRO-2</li><li class="chip">GRPO</li><li class="chip">约束束搜索</li><li class="chip">PyTorch</li></ul></div>
 </div>
 </article>
 <article id="p-shopagent" class="proj c-p t-g">
