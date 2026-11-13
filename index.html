@@ -286,6 +286,28 @@ h1,h2,h3,h4{text-wrap:balance}
 .facts.f2{grid-template-columns:1fr 1fr}
 }
 @media (max-width:640px){.proj-flag{--s:92px;--fs:16px;top:-30px;left:-10px}}
+/* MiniOneRec 流程示意：用 HTML 画，替代截图 */
+.sidfig-body{display:grid;gap:12px;padding:16px 16px 14px}
+.sidfig-band{display:grid;gap:7px}
+.sidfig-k{margin:0;font-size:10px;font-weight:700;letter-spacing:.13em;line-height:1.3}
+.sidfig-row{display:flex;flex-wrap:wrap;align-items:center;gap:5px}
+.sidfig-node{padding:6px 9px;background:var(--paper);border:2.5px solid var(--ink);box-shadow:2px 2px 0 var(--ink);font-size:11px;font-weight:700;line-height:1.25;text-align:center;white-space:nowrap}
+.sidfig-node small{display:block;font-size:8px;font-weight:700;letter-spacing:.16em;opacity:.65}
+.sidfig-arrow{font-size:13px;font-weight:700;line-height:1}
+.sidfig-out{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:3px}
+.sidfig-cap{font-size:10px;font-weight:700;letter-spacing:.04em}
+.sidfig-sid{background:var(--yellow)}
+.sidfig-sft{background:var(--blue)}
+.sidfig-rl{background:var(--pink)}
+.sidfig-foot{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px}
+.sidfig-pill{flex:1 1 0;min-width:86px;padding:4px 6px;background:var(--green);border:2.5px solid var(--ink);font-size:10px;font-weight:700;text-align:center;white-space:nowrap}
+@media (max-width:520px){
+.sidfig-body{padding:12px}
+.sidfig-node{padding:5px 6px;font-size:10px}
+.sidfig-arrow{font-size:11px}
+.sidfig-row{gap:4px}
+.sidfig-pill{min-width:0;font-size:9.5px}
+}
 /* ---------- competitions ---------- */
 .comp-list{display:grid;gap:clamp(28px,4vw,44px)}
 .comp{display:grid;gap:26px 44px;padding:clamp(22px,3.4vw,44px);background:var(--paper);border:var(--line);box-shadow:var(--sh-lg)}
@@ -546,7 +568,7 @@ h1,h2,h3,h4{text-wrap:balance}
 <div class="skill-top"><span class="skill-ico"><svg aria-hidden="true"><use href="#s-rag"/></svg></span><span class="skill-no">04</span></div>
 <h3>检索 &amp; 推荐</h3>
 <p class="skill-en">Retrieval &amp; RecSys</p>
-<ul class="chips"><li class="chip">RAG</li><li class="chip">BGE-M3</li><li class="chip">BGE-Reranker-v2</li><li class="chip">Qwen3-VL-Embedding</li><li class="chip">Qwen3-VL-Reranker</li><li class="chip">向量检索</li><li class="chip">语义重排</li><li class="chip">DCN</li><li class="chip">多任务 CTR 预估</li><li class="chip">Listwise 排序</li></ul>
+<ul class="chips"><li class="chip">RAG</li><li class="chip">BGE-M3</li><li class="chip">BGE-Reranker-v2</li><li class="chip">Qwen3-VL-Embedding</li><li class="chip">Qwen3-VL-Reranker</li><li class="chip">向量检索</li><li class="chip">语义重排</li><li class="chip">语义 ID</li><li class="chip">RQ-VAE</li><li class="chip">生成式推荐</li><li class="chip">DCN</li><li class="chip">多任务 CTR 预估</li><li class="chip">Listwise 排序</li></ul>
 </article>
 <article class="skill c-o">
 <div class="skill-top"><span class="skill-ico"><svg aria-hidden="true"><use href="#s-eng"/></svg></span><span class="skill-no">05</span></div>
@@ -696,7 +718,7 @@ h1,h2,h3,h4{text-wrap:balance}
 <header class="sec-head">
 <p class="sec-label"><span>04</span><span>Projects</span></p>
 <h2 id="projects-title" class="sec-title">核心<span class="hl">项目</span></h2>
-<p class="sec-lead">四个核心 AI 项目：流式足球视频 Caption、中文购物 Agent 后训练（SFT、GRPO 与 OPD）、从零实现的 Transformer 翻译，以及多 Agent 求职辅助工作流。</p>
+<p class="sec-lead">五个核心 AI 项目：流式足球视频 Caption、语义 ID 生成式推荐、中文购物 Agent 后训练（SFT、GRPO 与 OPD）、从零实现的 Transformer 翻译，以及多 Agent 求职辅助工作流。</p>
 </header>
 <div class="proj-list">
 <article id="p-soccer" class="proj c-g t-y">
@@ -729,7 +751,66 @@ h1,h2,h3,h4{text-wrap:balance}
 <a class="btn btn-sm c-y" href="files/OnlineSoccer-CSCWD2027.pdf" target="_blank" rel="noopener noreferrer"><svg class="i" aria-hidden="true"><use href="#i-file"/></svg>查看论文<span class="sr">（在新标签页打开）</span></a></div>
 </div>
 </article>
-<article id="p-shopagent" class="proj rev c-p t-g">
+<article id="p-minionerec" class="proj rev c-o t-b">
+<div class="proj-media">
+<figure class="browser mw-560" role="img" aria-label="MiniOneRec 流程示意：商品标题与描述经 Sentence-BERT 编码、三层 RQ-VAE 量化，得到三位语义 ID；用户历史行为序列转成 SID token，经 Qwen2.5 多任务 SFT 与 GRPO 对齐后生成 Top-10 候选，碰撞数为 0，合法生成率 100%。">
+<div class="browser-bar" aria-hidden="true"><i></i><i></i><i></i><span class="browser-url">minionerec · sid → llm → grpo</span></div>
+<div class="sidfig-body">
+<div class="sidfig-band">
+<p class="sidfig-k">① 商品语义 → 离散 ID</p>
+<div class="sidfig-row">
+<span class="sidfig-node">商品文本</span><span class="sidfig-arrow" aria-hidden="true">→</span>
+<span class="sidfig-node">Sentence-BERT</span><span class="sidfig-arrow" aria-hidden="true">→</span>
+<span class="sidfig-node">RQ-VAE ×3</span>
+</div>
+<div class="sidfig-out"><span class="sidfig-node sidfig-sid"><small>SID</small>12 · 305 · 8814</span><span class="sidfig-cap">一一映射 · CC = 0</span></div>
+</div>
+<div class="sidfig-band">
+<p class="sidfig-k">② 微调与策略对齐</p>
+<div class="sidfig-row">
+<span class="sidfig-node sidfig-sft">Qwen2.5 + SID 词表</span><span class="sidfig-arrow" aria-hidden="true">→</span>
+<span class="sidfig-node">多任务 SFT</span><span class="sidfig-arrow" aria-hidden="true">→</span>
+<span class="sidfig-node sidfig-rl">GRPO</span>
+</div>
+</div>
+<div class="sidfig-band">
+<p class="sidfig-k">③ 推理：行为序列 → 候选</p>
+<div class="sidfig-row">
+<span class="sidfig-node">行为序列</span><span class="sidfig-arrow" aria-hidden="true">→</span>
+<span class="sidfig-node">约束束搜索</span><span class="sidfig-arrow" aria-hidden="true">→</span>
+<span class="sidfig-node">Top-10</span>
+</div>
+</div>
+<div class="sidfig-foot">
+<span class="sidfig-pill">合法生成 100%</span><span class="sidfig-pill">Recall@10 +15.2%</span><span class="sidfig-pill">NDCG@10 +12.8%</span>
+</div>
+</div>
+</figure>
+</div>
+<div class="proj-body">
+<div class="proj-kick"><span class="proj-no">PROJECT 02</span><span class="chip fill c-o">生成式推荐</span></div>
+<h3>MiniOneRec：<wbr>基于<span class="nw">语义 ID</span>的<wbr>端到端生成式推荐</h3>
+<p class="proj-desc">传统序列推荐把商品学成独立的 ID 嵌入：ID 之间只靠共现建立关联，语义迁移不到新商品、新品类，换个场景就要重学。MiniOneRec 把推荐改写成生成——商品文本经 Sentence-BERT 编码、三层 RQ-VAE 量化成层次化语义 ID（SID），用户行为序列转成 SID token 后交给 Qwen2.5 做 next-token 预测，SFT 之后再用 GRPO 做推荐导向对齐。在 Amazon Industrial &amp; Scientific 上，相较 ID 类序列推荐基线，Recall@10 提升 15.2%、NDCG@10 提升 12.8%。</p>
+<ul class="metrics" aria-label="关键指标">
+<li class="metric"><b>15.2%</b><span>Recall@10</span></li>
+<li class="metric"><b>12.8%</b><span>NDCG@10</span></li>
+<li class="metric"><b>CC = 0</b><span>语义 ID 碰撞</span></li>
+<li class="metric"><b>100%</b><span>合法生成率</span></li>
+</ul>
+</div>
+<div class="proj-more">
+<dl class="facts f2">
+<div><dt>背景与动机</dt><dd>传统推荐依赖独立商品 ID 嵌入：ID 之间只靠共现关联，语义知识迁移不出去，新商品、新品类、跨场景都要重新学。MiniOneRec 把「召回 + 排序」统一成「由行为序列生成下一个商品的 SID」，商品语义常驻词表，模型直接学「什么样的行为后面该接什么商品」。</dd></div>
+<div><dt>语义 ID 体系</dt><dd>用 Sentence-BERT 对商品标题与描述做联合语义编码，再用三层残差量化 VAE（RQ-VAE）逐层量化残差，得到三位层次化 SID（粗粒度类目 → 细粒度属性）；相同前缀天然表达「同类商品」，词表规模也可控。</dd></div>
+<div><dt>碰撞与合法生成</dt><dd>量化会把不同商品映射到同一个 SID。通过迭代去重重新分配冲突码字，并在推理端配合约束解码，实现 SID 与商品一一映射：碰撞数 CC=0，合法生成率 100%，不会输出词表外的无效候选。</dd></div>
+<div><dt>多任务 SFT</dt><dd>以 Qwen2.5 为基座扩展 SID 专用词表，把用户历史交互序列转成 SID token；联合训练「自回归 next-token 推荐」与「SID 语义对齐」两个目标，让生成的 SID 既符合行为分布、又保持语义一致。基于 DeepSpeed ZeRO-2 在 8×A100 上训练，单卡显存开销明显下降。</dd></div>
+<div><dt>GRPO 对齐</dt><dd>SFT 之后用 GRPO 做推荐导向的策略优化，奖励由「命中正确性」与「排序感知」两部分复合；解码阶段用约束束搜索，保证候选合法、不重复，进一步提升排序精度。</dd></div>
+<div><dt>实验结果</dt><dd>在 Amazon Industrial &amp; Scientific 公开数据集上，与 ID 类序列推荐基线相比，Recall@10 提升 15.2%、NDCG@10 提升 12.8%，验证了「语义 ID + 生成式」范式在公开数据上的效果优势。</dd></div>
+</dl>
+<div class="proj-foot"><ul class="chips"><li class="chip">Sentence-BERT</li><li class="chip">RQ-VAE</li><li class="chip">语义 ID</li><li class="chip">Qwen2.5</li><li class="chip">DeepSpeed ZeRO-2</li><li class="chip">GRPO</li><li class="chip">约束束搜索</li><li class="chip">PyTorch</li></ul></div>
+</div>
+</article>
+<article id="p-shopagent" class="proj c-p t-g">
 <div class="proj-media">
 <figure class="browser mw-560">
 <div class="browser-bar" aria-hidden="true"><i></i><i></i><i></i><span class="browser-url">shopsimulator · sft → grpo / opd</span></div>
@@ -737,7 +818,7 @@ h1,h2,h3,h4{text-wrap:balance}
 </figure>
 </div>
 <div class="proj-body">
-<div class="proj-kick"><span class="proj-no">PROJECT 02</span><span class="chip fill c-o">Agentic RL</span></div>
+<div class="proj-kick"><span class="proj-no">PROJECT 03</span><span class="chip fill c-o">Agentic RL</span></div>
 <h3>长程中文购物 Agent 后训练：<wbr>LoRA SFT、多轮 GRPO 与 OPD</h3>
 <p class="proj-desc">一次中文购物 Agent 的 RL 后训练探索：在 ShopSimulator v2.1 上以 Qwen3.5-2B 为学生，从 LoRA SFT 出发，依次尝试多轮 GRPO、On-Policy Distillation（OPD）以及两者联合训练，在 200 题测试集上比较每一步的提升。SFT 把 strict success 从 1.0% 提升到 69.0%；GRPO 再提升 1.5 个点；以 Qwen3.8-27B 为教师做 token 级 OPD，在 SFT 基础上提升 10.5 个点，达到 79.5%；GRPO 与 OPD 联合训练为 80.0%，与 OPD 相当。</p>
 <ul class="metrics" aria-label="关键指标">
@@ -761,7 +842,7 @@ h1,h2,h3,h4{text-wrap:balance}
 <div class="proj-foot"><ul class="chips"><li class="chip">Qwen3.5-2B</li><li class="chip">Qwen3.8-27B</li><li class="chip">veRL</li><li class="chip">GRPO</li><li class="chip">OPD</li><li class="chip">LoRA SFT</li><li class="chip">vLLM</li><li class="chip">Ray</li><li class="chip">FSDP</li><li class="chip">Rule-based Reward</li></ul></div>
 </div>
 </article>
-<article class="proj c-b t-p">
+<article class="proj rev c-b t-p">
 <div class="proj-media">
 <figure class="browser mw-560">
 <div class="browser-bar" aria-hidden="true"><i></i><i></i><i></i><span class="browser-url">huggingface.co/spaces/Huangxin14/translator_zh-en</span></div>
@@ -769,7 +850,7 @@ h1,h2,h3,h4{text-wrap:balance}
 </figure>
 </div>
 <div class="proj-body">
-<div class="proj-kick"><span class="proj-no">PROJECT 03</span><span class="chip fill c-y">从零实现</span></div>
+<div class="proj-kick"><span class="proj-no">PROJECT 04</span><span class="chip fill c-y">从零实现</span></div>
 <h3>基于 Transformer 架构的中英机器翻译系统</h3>
 <p class="proj-desc">参照《Attention Is All You Need》从零实现 Encoder-Decoder Transformer 翻译模型，完成中英双语 Tokenizer、平行语料清洗对齐、训练调优与 Hugging Face 在线部署，形成从模型构建到应用上线的完整闭环。</p>
 <ul class="metrics" aria-label="关键指标">
@@ -788,7 +869,7 @@ h1,h2,h3,h4{text-wrap:balance}
 <a class="btn btn-sm c-y" href="https://huggingface.co/spaces/Huangxin14/translator_zh-en" target="_blank" rel="noopener noreferrer">在线体验<svg class="i" aria-hidden="true"><use href="#i-ext"/></svg><span class="sr">（在新标签页打开）</span></a></div>
 </div>
 </article>
-<article class="proj rev c-y t-b">
+<article class="proj c-y t-b">
 <div class="proj-media">
 <figure class="browser mw-560">
 <div class="browser-bar" aria-hidden="true"><i></i><i></i><i></i><span class="browser-url">github.com/H-X1n/Interview-master</span></div>
@@ -796,7 +877,7 @@ h1,h2,h3,h4{text-wrap:balance}
 </figure>
 </div>
 <div class="proj-body">
-<div class="proj-kick"><span class="proj-no">PROJECT 04</span><span class="chip fill c-g">AI Agent</span></div>
+<div class="proj-kick"><span class="proj-no">PROJECT 05</span><span class="chip fill c-g">AI Agent</span></div>
 <h3>Resume Agent Studio：AI Agent 简历优化与模拟面试系统</h3>
 <p class="proj-desc">面向 AI 算法求职场景，搭建基于 LLM 的求职辅助工作流，根据用户资料库与岗位 JD 自动完成简历定制、匹配度评估、优化建议生成与模拟面试准备，覆盖从投递前筛选到面试前复盘的完整流程。</p>
 <ul class="metrics" aria-label="关键指标">
